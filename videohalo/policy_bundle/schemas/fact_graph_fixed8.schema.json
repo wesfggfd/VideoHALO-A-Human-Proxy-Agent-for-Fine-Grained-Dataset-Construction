@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fixed-8 verified fact graph",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "video_id",
+    "status",
+    "facts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "videohalo_fact_graph_fixed8_3.7.0"
+    },
+    "video_id": {
+      "type": "string"
+    },
+    "status": {
+      "const": "surrogate_verified"
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_fact_id",
+          "fact_kind",
+          "leaf_label",
+          "conflict_slot",
+          "natural_language_fact",
+          "time_scope",
+          "verifier_consensus"
+        ],
+        "properties": {
+          "source_fact_id": {
+            "type": "string"
+          },
+          "fact_kind": {
+            "enum": [
+              "entity_existence",
+              "entity_category",
+              "entity_quantity",
+              "attribute_value",
+              "static_relation",
+              "action_predicate",
+              "temporal_relation",
+              "camera_predicate"
+            ]
+          },
+          "leaf_label": {
+            "enum": [
+              "EntityExistence",
+              "EntityCategory",
+              "EntityQuantity",
+              "AttributeValue",
+              "StaticRelation",
+              "ActionPredicate",
+              "TemporalRelation",
+              "CameraPredicate"
+            ]
+          },
+          "conflict_slot": {
+            "enum": [
+              "existence",
+              "category",
+              "count",
+              "attribute_value",
+              "relation_predicate",
+              "predicate",
+              "order",
+              "camera_predicate"
+            ]
+          },
+          "natural_language_fact": {
+            "type": "string"
+          },
+          "time_scope": {
+            "type": "object",
+            "required": [
+              "start_sec",
+              "end_sec"
+            ],
+            "properties": {
+              "start_sec": {
+                "type": "number",
+                "minimum": 0
+              },
+              "end_sec": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "verifier_consensus": {
+            "type": "object",
+            "required": [
+              "accepted",
+              "verifier_count"
+            ],
+            "properties": {
+              "accepted": {
+                "const": true
+              },
+              "verifier_count": {
+                "const": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  }
+}

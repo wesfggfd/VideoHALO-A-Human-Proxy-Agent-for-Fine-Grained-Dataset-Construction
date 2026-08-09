@@ -1,0 +1,23 @@
+{
+  "schema_version": "videohalo_probe_pair_sample_fixed8_3.6.1",
+  "pair_id": "pair_captioning_0097_fact_01",
+  "media": {
+    "canonical_media_uri": "media://captioning_0097/original",
+    "evidence_policy_id": "gemini_native_original_video_v1",
+    "registered_modalities": [
+      "visual",
+      "speech_audio",
+      "non_speech_audio",
+      "on_screen_text",
+      "camera_editing",
+      "container_metadata"
+    ],
+    "video_id": "captioning_0097"
+  },
+  "task_type": "video_captioning",
+  "question": "State one directly observable fact from the video in one sentence.",
+  "answer": "A bouquet of flowers is present in the scene.",
+  "counterfactual_answer": "A bouquet of flowers is not present in the scene.",
+  "leaf_label": "EntityExistence",
+  "conflict_slot": "existence"
+}

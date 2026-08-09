@@ -1,0 +1,39 @@
+mutation_version: fixed8-3.7.0
+operators:
+- operator_id: toggle_entity_existence
+  target_leaf: EntityExistence
+  fact_kind: entity_existence
+  slot: existence
+- operator_id: replace_entity_category
+  target_leaf: EntityCategory
+  fact_kind: entity_category
+  slot: category
+- operator_id: change_entity_count
+  target_leaf: EntityQuantity
+  fact_kind: entity_quantity
+  slot: count
+- operator_id: replace_attribute_value
+  target_leaf: AttributeValue
+  fact_kind: attribute_value
+  slot: attribute_value
+- operator_id: invert_static_relation
+  target_leaf: StaticRelation
+  fact_kind: static_relation
+  slot: relation_predicate
+- operator_id: replace_action_predicate
+  target_leaf: ActionPredicate
+  fact_kind: action_predicate
+  slot: predicate
+- operator_id: reverse_temporal_order
+  target_leaf: TemporalRelation
+  fact_kind: temporal_relation
+  slot: order
+- operator_id: replace_camera_predicate
+  target_leaf: CameraPredicate
+  fact_kind: camera_predicate
+  slot: camera_predicate
+global_invariants:
+- changed_atomic_fact_count=1
+- changed_slot_count=1
+- counterfactual_contradicted_count=1
+- additional_error_count=0

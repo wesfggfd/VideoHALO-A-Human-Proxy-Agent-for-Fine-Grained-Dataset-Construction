@@ -1,0 +1,27 @@
+runtime_profiles_version: 3.7.0
+profiles:
+  probe_build:
+    graph: build
+    taxonomy: VHal-Fixed8-3.7
+    direct_output_schema: videohalo_probe_pair_sample_fixed8_3.6.1
+    fact_reflection_count: 1
+    candidate_reflection_count: 1
+    external_semantic_tools_enabled: false
+    focused_native_retry_max: 1
+    output_filename: public_probe_items.jsonl
+  evalbench_build:
+    graph: build
+    taxonomy: VHal-Fixed8-3.7
+    direct_output_schema: videohalo_probe_pair_sample_fixed8_3.6.1
+    fact_reflection_count: 1
+    candidate_reflection_count: 1
+    external_semantic_tools_enabled: false
+    focused_native_retry_max: 1
+    output_filename: public_evalbench_pairs.jsonl
+removed_runtime_operations:
+- freeze_batch
+- review_packaging
+- human_audit
+- agreement_metrics
+- batch_unlock
+- human_gold

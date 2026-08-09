@@ -1,0 +1,252 @@
+{
+  "package": "VideoHALO_3.7_Fixed8_Technical_Documentation",
+  "version": "3.7.5",
+  "file_count": 49,
+  "files": [
+    {
+      "path": "00_CHANGELOG_v3.6_to_v3.7.md",
+      "bytes": 1839,
+      "sha256": "f4da0c7d1a07f66968ba0e26cb889eb7d340edf26008adbc9794dee5be1db49c"
+    },
+    {
+      "path": "01_VHal_Fixed8_Atomic_Fact_Taxonomy.md",
+      "bytes": 6581,
+      "sha256": "a1cfc130e8a80e61dbe9c878ed7501982d12d45b2db2375e80620bba4be660c8"
+    },
+    {
+      "path": "02_VideoHALO_Core_System_Prompt.md",
+      "bytes": 4268,
+      "sha256": "4f11b01819a737d3a1b01d1c125dbe1a3052aad863adc912086dd1587757ac57"
+    },
+    {
+      "path": "03_Multimodal_Video_Registration.md",
+      "bytes": 1790,
+      "sha256": "accc806edfe7fbe852f3756cdcb30fcb7db5153817920782467211d5cf226175"
+    },
+    {
+      "path": "04_Memory_System_Design.md",
+      "bytes": 1028,
+      "sha256": "703a8c531f6e34d1207cd48b0c7da495a1ecdf79a7ad2cb2edcf2c7b178f54c9"
+    },
+    {
+      "path": "05_LangGraph_Engineering_Architecture.md",
+      "bytes": 1575,
+      "sha256": "623300e70799fec7538f99f75a0cb21153021560f7c8ba66f121ba05bab80774"
+    },
+    {
+      "path": "06_Build_Mode_Pipeline.md",
+      "bytes": 4931,
+      "sha256": "8e453a1650f8962271c24d92b13d5027b75f779e1174ae24c56e6130350a9405"
+    },
+    {
+      "path": "08_Direct_Output_Data_Contracts.md",
+      "bytes": 1690,
+      "sha256": "06edee934f6b21bd9f5e1a6e10d5b246e9ec8028eb9cab861174be39469b02ac"
+    },
+    {
+      "path": "09_Dataset_Planning_and_Relative_Allocation.md",
+      "bytes": 1083,
+      "sha256": "ea775d75faff1f6fc96c7151db2d9241a1bc5333c9447c87fceefaa3feb623b3"
+    },
+    {
+      "path": "10_Deployment_Testing_and_Operations.md",
+      "bytes": 1870,
+      "sha256": "195c6e2cc76bd8c7f63b31797b163de94e3f76c24b8bc58e8c2d8ab4895b25f4"
+    },
+    {
+      "path": "11_Implementation_Migration_From_3.6.md",
+      "bytes": 1387,
+      "sha256": "a90236892325bed3041d15794b390c8322cfe5f75724eaafb31b00540802c1dd"
+    },
+    {
+      "path": "COMPLETE_SPEC.md",
+      "bytes": 30507,
+      "sha256": "07b863d8dc72baa10a94b1d92ad329b0442930892a6feb84ef560fe9f743bafd"
+    },
+    {
+      "path": "config/core_memory_manifest.json",
+      "bytes": 2026,
+      "sha256": "926534d6b1265d71cd3e3aa62c654445b240aa800068ce0ea27383f4189d2a81"
+    },
+    {
+      "path": "config/leaf_search_plan.json",
+      "bytes": 6245,
+      "sha256": "bbc5c568d6c42377b48543891693cd8288622c274582972f3fa8d7196b30fdc8"
+    },
+    {
+      "path": "config/media_ingestion_policy.json",
+      "bytes": 443,
+      "sha256": "e47ef41002b6a0ecf25c802de015e728f2f217c5641bc5c7c374d52aef8082e9"
+    },
+    {
+      "path": "config/media_ingestion_policy.yaml",
+      "bytes": 359,
+      "sha256": "2ddfffe6adf14f48a42ed10ff58d44bd622f5a278e3de1112b31d34eb1d79c11"
+    },
+    {
+      "path": "config/model_roles.yaml",
+      "bytes": 1088,
+      "sha256": "5397fe0820e3a501de3b12652066a2d7263c97f616a14db5df390976b01c96bc"
+    },
+    {
+      "path": "config/mutation_operators.json",
+      "bytes": 1560,
+      "sha256": "e439a0de395531557fd0600e49b609ce747f78a52404f9e03462c16cb3eec894"
+    },
+    {
+      "path": "config/mutation_operators.yaml",
+      "bytes": 1126,
+      "sha256": "223e11ebfb083aeeea57a3d6a4a03c15dd9c03701c7930bb0850c0855a94e2f1"
+    },
+    {
+      "path": "config/reason_codes.yaml",
+      "bytes": 764,
+      "sha256": "1445061ab030fa3e56e47a1f988fd9681561e3c5fa5011d70a4e3f552a22056d"
+    },
+    {
+      "path": "config/resolver_rules.json",
+      "bytes": 325,
+      "sha256": "e63cd6b1e16bba77bafad677b241eeeb09734eedc5f1791703ceea0fe66ee104"
+    },
+    {
+      "path": "config/runtime_profiles.yaml",
+      "bytes": 800,
+      "sha256": "bb90ee66f14b97670ea9698542bd59e62f3d68b366aa7d5580e1d48640fa3cad"
+    },
+    {
+      "path": "config/surface_templates.yaml",
+      "bytes": 5370,
+      "sha256": "8b1bb5c3efd24751a3d3938e5747458743c7eacac3aea2e713a555dab1a9ed40"
+    },
+    {
+      "path": "config/taxonomy.json",
+      "bytes": 2700,
+      "sha256": "08dbcfa15cf8324cb018101b10956bfbfb2c23c72fd84e8df528340cadfa4290"
+    },
+    {
+      "path": "config/taxonomy.yaml",
+      "bytes": 2011,
+      "sha256": "03031d00fb03389b0b685df3dbc48d6fe48b96d29abcbd58bd629d1b5e748b63"
+    },
+    {
+      "path": "examples/public_probe_items_fixed8_examples.jsonl",
+      "bytes": 5415,
+      "sha256": "b98fb1fdc5e9abbd076a56a74e608776149d8257dd6c67b59d9bb2ae414639f1"
+    },
+    {
+      "path": "examples/sample_fact_graph.json",
+      "bytes": 569,
+      "sha256": "93250d5e8567a8ea97bc4d83b4e3d0316bd8ecddc30d1dc288f256bda71bb149"
+    },
+    {
+      "path": "examples/sample_probe_pair.json",
+      "bytes": 792,
+      "sha256": "64223b6c45d4dfd5d21e739edb7cd66e6b69c6bb8bdaa3d0952a17fb16f34536"
+    },
+    {
+      "path": "examples/sample_video_manifest.json",
+      "bytes": 466,
+      "sha256": "590b726346faf6edcb75e764e9b8d6f5bf328a24812301eeff2147a277670d6e"
+    },
+    {
+      "path": "examples/source_format_compatibility_report.json",
+      "bytes": 898,
+      "sha256": "6dbd172665da4b7e722c971759a4f81a95adae99764993e41d69649dfaca4144"
+    },
+    {
+      "path": "implementation_skeleton/build_orchestrator.py",
+      "bytes": 1188,
+      "sha256": "23882dc4c5fe971fdf2a1ae5db60b1e67ac2c9cf37b8541e8a6c6ec4594e96db"
+    },
+    {
+      "path": "implementation_skeleton/context.py",
+      "bytes": 470,
+      "sha256": "8682ab2f23d21bea205f2309942a898879ebb88753f5732de212ce5f7fcb5b40"
+    },
+    {
+      "path": "implementation_skeleton/direct_output_writer.py",
+      "bytes": 695,
+      "sha256": "04a32ed846a194a66e8136793ee69a5d5c76ddfebdcc7f6e28ceaf310ecb8a5e"
+    },
+    {
+      "path": "implementation_skeleton/fact_graph_build.py",
+      "bytes": 922,
+      "sha256": "33eebe7423cbc97c1f9be1bd7c4a1671ab04f545801be8f8c020214ff2b45385"
+    },
+    {
+      "path": "implementation_skeleton/media_registration.py",
+      "bytes": 1018,
+      "sha256": "553608c3803686ea603c47bd1f7a1c84412e2892ef0f07813b2b06ec6151503c"
+    },
+    {
+      "path": "implementation_skeleton/pair_construction.py",
+      "bytes": 1237,
+      "sha256": "e632925bea87c0373ca883802c2651f8485d7d509a791d0451dc8a6574815ab3"
+    },
+    {
+      "path": "implementation_skeleton/README.md",
+      "bytes": 273,
+      "sha256": "25d544ef30d03b352a2af6c1c3a47e2a469c9584c648f4979e85e4f36f9a38d9"
+    },
+    {
+      "path": "implementation_skeleton/registry.py",
+      "bytes": 687,
+      "sha256": "850cc235c7e5a8e2f3ef37738e21e7aa5e860f487f1bf549e781d10505393cdf"
+    },
+    {
+      "path": "implementation_skeleton/taxonomy_resolver.py",
+      "bytes": 1113,
+      "sha256": "c9dd7aadbe862cd160b24979a5ca4f2fd9e3128da21eb310af64462a67d95897"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2399,
+      "sha256": "cccb4f62ee214f32880d1c3d129d95e2217432a4563497fb998108f5a48c6fe8"
+    },
+    {
+      "path": "schemas/eligibility_record_fixed8.schema.json",
+      "bytes": 860,
+      "sha256": "b0a026e0749589d9b80e6af3d3d380d17f8c8b252841833b5227d04c6d7ef228"
+    },
+    {
+      "path": "schemas/fact_graph_fixed8.schema.json",
+      "bytes": 2855,
+      "sha256": "f0f8d9e2b002fab300966e00d9e89cc6c60d7f33f68e68c75f2d048bf5997233"
+    },
+    {
+      "path": "schemas/video_manifest.schema.json",
+      "bytes": 1196,
+      "sha256": "a373afb5546b145f6608157d15604b16afa1fb494ddc79ac5d5dbe4602f24edd"
+    },
+    {
+      "path": "schemas/videohalo_probe_pair_sample_fixed8.schema.json",
+      "bytes": 4624,
+      "sha256": "1ccac51f6d918d39f3f94544c5f1a62940b11b6e177aaf162d36aac28b45854c"
+    },
+    {
+      "path": "tools/rebuild_package.py",
+      "bytes": 4409,
+      "sha256": "42a153d831ee8ec0322361157d2f33ded77cce9dd362e06829535ee3ae88a398"
+    },
+    {
+      "path": "tools/validate_package.py",
+      "bytes": 819,
+      "sha256": "62ad708181be2b072b91d15a0d016831f2e38b70e87e88d71a1815d9217cf899"
+    },
+    {
+      "path": "VALIDATION_REPORT.json",
+      "bytes": 374,
+      "sha256": "05d948fff994719f2c2e6a7f26903a50776f9b1966c5aecbfb8da33754231154"
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "bytes": 227,
+      "sha256": "b03b28bce6f0346cbeb8a2fe5157b4f8433ee4da1be39b3c5db529e42f2659ad"
+    },
+    {
+      "path": "VideoHALO_3.7_Fixed8_Complete_Technical_Specification.txt",
+      "bytes": 30507,
+      "sha256": "07b863d8dc72baa10a94b1d92ad329b0442930892a6feb84ef560fe9f743bafd"
+    }
+  ]
+}

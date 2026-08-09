@@ -1,0 +1,43 @@
+{
+  "schema_version": "vidhalloc_formal_run_config_enterprise_1.0",
+  "status": "example_replace_before_running",
+  "selection": "VidHalLoc_1200_budget500.json",
+  "output": "runs/formal_run_2000_enterprise/public_probe_items.jsonl",
+  "status_json": "runs/formal_run_2000_enterprise/status.json",
+  "dataset_id": "vidhalloc_enterprise_2000",
+  "run_id": "replace-with-your-run-id",
+  "preserved_pair_count": 0,
+  "preserved_completed_video_count": 0,
+  "target_pairs": 2000,
+  "window_size": 100,
+  "video_workers": 5,
+  "upload_workers": 3,
+  "per_video_pair_cap": 2,
+  "selection_seed": 42,
+  "max_video_attempts": 2,
+  "process_all_videos": false,
+  "budget_policy": "VidHalLoc_1200_budget500_build/budget_policy.json",
+  "provider": {
+    "backend": "gemini_enterprise_agent_platform",
+    "authentication": "adc",
+    "long_lived_service_account_key_files_forbidden": true,
+    "api_keys_forbidden": true,
+    "media_transport": "private_same_project_gcs_uri",
+    "location": "global",
+    "model": "gemini-3.6-flash",
+    "service_tier": "flex_only",
+    "request_timeout_seconds": 1800,
+    "model_requests_per_minute": 8,
+    "auth_project_circuit_breaker": true,
+    "transient_retry_attempts": 3
+  },
+  "launch_gates": [
+    "adc_identity_and_quota_project_match",
+    "least_privilege_iam_passes",
+    "private_same_project_gcs_passes",
+    "text_model_preflight_passes",
+    "one_video_smoke_passes",
+    "concurrent_smoke_passes",
+    "fixed8_question_answer_contract_gate_passes"
+  ]
+}

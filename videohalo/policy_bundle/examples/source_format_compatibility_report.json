@@ -1,0 +1,43 @@
+{
+  "source_file": "public_probe_items(2).jsonl",
+  "record_count": 234,
+  "unique_pair_ids": 234,
+  "schema_versions": [
+    "videohalo_probe_pair_sample_fixed8_3.6.1"
+  ],
+  "leaf_counts": {
+    "ActionPredicate": 20,
+    "AttributeValue": 49,
+    "EntityExistence": 45,
+    "StaticRelation": 43,
+    "TemporalRelation": 23,
+    "EntityCategory": 14,
+    "EntityQuantity": 26,
+    "CameraPredicate": 14
+  },
+  "task_counts": {
+    "video_captioning": 96,
+    "video_qa": 138
+  },
+  "conflict_slot_counts": {
+    "predicate": 20,
+    "attribute_value": 49,
+    "existence": 45,
+    "relation_predicate": 43,
+    "order": 23,
+    "category": 14,
+    "count": 26,
+    "camera_predicate": 14
+  },
+  "required_top_level_fields": [
+    "schema_version",
+    "pair_id",
+    "media",
+    "task_type",
+    "question",
+    "answer",
+    "counterfactual_answer",
+    "leaf_label",
+    "conflict_slot"
+  ]
+}

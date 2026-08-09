@@ -1,0 +1,12 @@
+reason_codes_version: 3.7.0
+codes:
+  native_video_insufficient: Original Gemini-native video is not decisive after the
+    bounded retry.
+  fixed8_out_of_scope: The observed conflict is outside the eight-leaf taxonomy.
+  ambiguous_grounding: More than one entity or event grounding remains plausible.
+  extra_atomic_fact: Language realization introduced an additional claim.
+  multiple_changed_slots: Pair differs in more than one typed slot.
+  wrong_leaf_after_backparse: Resolved Fixed-8 leaf differs from planned leaf.
+  verifier_disagreement: Independent A/B verifiers did not reach structural consensus.
+  pair_not_minimal: The answer pair failed one-fact/one-slot minimality.
+  duplicate_pair_id: A direct-output record with the same pair_id already exists.

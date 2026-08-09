@@ -1,0 +1,26 @@
+model_roles_version: 3.7.3
+roles:
+- role: LEAF_OPPORTUNITY_SCOUT
+  thinking_level: high
+  shares_observations: false
+  purpose: scan every Fixed-8 leaf from the high-resolution original video using the frozen taxonomy-first search plan
+- role: LEAF_FACT_EXTRACTOR
+  thinking_level: high
+  shares_observations: false
+  purpose: extract at most one high-resolution-grounded atomic fact for each constructible planned leaf
+- role: FACT_REFLECTION
+  thinking_level: high
+  shares_observations: false
+  purpose: high-thinking reflection over one extracted source fact, its leaf boundary, evidence interval, and mutation viability
+- role: LANGUAGE_REALIZER
+  thinking_level: low
+  video_access: false
+  purpose: verbalize supported and counterfactual structures
+- role: PAIR_BACKPARSER
+  thinking_level: low
+  video_access: false
+  purpose: jointly recover both answer facts while preserving shared anchors
+- role: CANDIDATE_REFLECTION
+  thinking_level: high
+  shares_observations: false
+  purpose: high-thinking reflection over the natural answer, single-slot counterfactual, and planned leaf

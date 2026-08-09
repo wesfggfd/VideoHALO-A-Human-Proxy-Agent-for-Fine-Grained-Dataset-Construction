@@ -1,0 +1,17 @@
+{
+  "media_ingestion_policy_version": "3.7.1",
+  "evidence_policy_id": "gemini_native_original_video_v1",
+  "transport": "private_gcs_uri",
+  "canonical_registration": true,
+  "registered_modalities": [
+    "visual",
+    "speech_audio",
+    "non_speech_audio",
+    "on_screen_text",
+    "camera_editing",
+    "container_metadata"
+  ],
+  "external_semantic_tools_enabled": false,
+  "focused_native_retry_max": 1,
+  "provider_uri_reuse": true
+}

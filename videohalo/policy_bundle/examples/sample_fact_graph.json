@@ -1,0 +1,22 @@
+{
+  "schema_version": "videohalo_fact_graph_fixed8_3.7.0",
+  "video_id": "videoqa_0102",
+  "status": "surrogate_verified",
+  "facts": [
+    {
+      "source_fact_id": "videoqa_0102_fact_05",
+      "fact_kind": "action_predicate",
+      "leaf_label": "ActionPredicate",
+      "conflict_slot": "predicate",
+      "natural_language_fact": "The adult dog rolls on its back on the ground.",
+      "time_scope": {
+        "start_sec": 0.0,
+        "end_sec": 8.0
+      },
+      "verifier_consensus": {
+        "accepted": true,
+        "verifier_count": 2
+      }
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+.env
+.env.*
+!.env.example
+.venv/
+.venv*/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.hypothesis/
+*.egg-info/
+
+# Credentials and private keys
+*credential*.json
+*credentials*.json
+*service-account*.json
+*service_account*.json
+*.pem
+*.p12
+*.pfx
+*.key
+application_default_credentials.json
+
+# Private media, datasets, and generated selections
+data/
+datasets/
+videos/
+artifacts/
+runs/
+outputs/
+VidHalLoc*.json
+VidHalLoc*.jsonl
+public_probe_items*.jsonl
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# Runtime state and logs
+*.log
+*.pid
+status.json
+runner.stdout*
+runner.stderr*
+efficiency_metrics.json
+efficiency_monitor.stdout*
+efficiency_monitor.stderr*
+

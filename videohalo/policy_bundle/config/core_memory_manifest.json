@@ -1,0 +1,59 @@
+{
+  "schema_version": "core_memory_manifest_3.7",
+  "core_memory_version": "3.7.5",
+  "taxonomy_version": "VHal-Fixed8-3.7",
+  "output_contract_version": "videohalo_probe_pair_sample_fixed8_3.6.1",
+  "frozen": true,
+  "assets": [
+    {
+      "package_path": "01_VHal_Fixed8_Atomic_Fact_Taxonomy.md",
+      "sha256": "a1cfc130e8a80e61dbe9c878ed7501982d12d45b2db2375e80620bba4be660c8",
+      "read_only": true
+    },
+    {
+      "package_path": "02_VideoHALO_Core_System_Prompt.md",
+      "sha256": "4f11b01819a737d3a1b01d1c125dbe1a3052aad863adc912086dd1587757ac57",
+      "read_only": true
+    },
+    {
+      "package_path": "config/taxonomy.json",
+      "sha256": "08dbcfa15cf8324cb018101b10956bfbfb2c23c72fd84e8df528340cadfa4290",
+      "read_only": true
+    },
+    {
+      "package_path": "config/resolver_rules.json",
+      "sha256": "e63cd6b1e16bba77bafad677b241eeeb09734eedc5f1791703ceea0fe66ee104",
+      "read_only": true
+    },
+    {
+      "package_path": "config/mutation_operators.json",
+      "sha256": "e439a0de395531557fd0600e49b609ce747f78a52404f9e03462c16cb3eec894",
+      "read_only": true
+    },
+    {
+      "package_path": "config/leaf_search_plan.json",
+      "sha256": "bbc5c568d6c42377b48543891693cd8288622c274582972f3fa8d7196b30fdc8",
+      "read_only": true
+    },
+    {
+      "package_path": "config/surface_templates.yaml",
+      "sha256": "8b1bb5c3efd24751a3d3938e5747458743c7eacac3aea2e713a555dab1a9ed40",
+      "read_only": true
+    },
+    {
+      "package_path": "config/runtime_profiles.yaml",
+      "sha256": "bb90ee66f14b97670ea9698542bd59e62f3d68b366aa7d5580e1d48640fa3cad",
+      "read_only": true
+    },
+    {
+      "package_path": "config/media_ingestion_policy.json",
+      "sha256": "e47ef41002b6a0ecf25c802de015e728f2f217c5641bc5c7c374d52aef8082e9",
+      "read_only": true
+    },
+    {
+      "package_path": "schemas/videohalo_probe_pair_sample_fixed8.schema.json",
+      "sha256": "1ccac51f6d918d39f3f94544c5f1a62940b11b6e177aaf162d36aac28b45854c",
+      "read_only": true
+    }
+  ]
+}

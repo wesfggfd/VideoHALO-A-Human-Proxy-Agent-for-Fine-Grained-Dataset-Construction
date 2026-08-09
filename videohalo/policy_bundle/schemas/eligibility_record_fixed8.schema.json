@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fixed-8 eligibility record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "video_id",
+    "source_fact_id",
+    "task_type",
+    "leaf_label",
+    "eligible",
+    "reason"
+  ],
+  "properties": {
+    "video_id": {
+      "type": "string"
+    },
+    "source_fact_id": {
+      "type": "string"
+    },
+    "task_type": {
+      "enum": [
+        "video_qa",
+        "video_captioning"
+      ]
+    },
+    "leaf_label": {
+      "enum": [
+        "EntityExistence",
+        "EntityCategory",
+        "EntityQuantity",
+        "AttributeValue",
+        "StaticRelation",
+        "ActionPredicate",
+        "TemporalRelation",
+        "CameraPredicate"
+      ]
+    },
+    "eligible": {
+      "type": "boolean"
+    },
+    "reason": {
+      "type": "string"
+    }
+  }
+}

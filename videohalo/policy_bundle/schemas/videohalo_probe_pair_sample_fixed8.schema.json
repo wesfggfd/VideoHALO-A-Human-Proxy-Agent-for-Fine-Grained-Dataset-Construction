@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://videohalo.local/schemas/videohalo_probe_pair_sample_fixed8.schema.json",
+  "title": "VideoHALO Fixed-8 direct pair sample",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "pair_id",
+    "media",
+    "task_type",
+    "question",
+    "answer",
+    "counterfactual_answer",
+    "leaf_label",
+    "conflict_slot"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "videohalo_probe_pair_sample_fixed8_3.6.1"
+    },
+    "pair_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "media": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "video_id",
+        "canonical_media_uri",
+        "registered_modalities",
+        "evidence_policy_id"
+      ],
+      "properties": {
+        "video_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "canonical_media_uri": {
+          "type": "string",
+          "pattern": "^media://"
+        },
+        "registered_modalities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "visual",
+              "speech_audio",
+              "non_speech_audio",
+              "on_screen_text",
+              "camera_editing",
+              "container_metadata"
+            ]
+          }
+        },
+        "evidence_policy_id": {
+          "const": "gemini_native_original_video_v1"
+        }
+      }
+    },
+    "task_type": {
+      "enum": [
+        "video_qa",
+        "video_captioning"
+      ]
+    },
+    "question": {
+      "type": "string",
+      "minLength": 1
+    },
+    "answer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "counterfactual_answer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "leaf_label": {
+      "enum": [
+        "EntityExistence",
+        "EntityCategory",
+        "EntityQuantity",
+        "AttributeValue",
+        "StaticRelation",
+        "ActionPredicate",
+        "TemporalRelation",
+        "CameraPredicate"
+      ]
+    },
+    "conflict_slot": {
+      "enum": [
+        "existence",
+        "category",
+        "count",
+        "attribute_value",
+        "relation_predicate",
+        "predicate",
+        "order",
+        "camera_predicate"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "leaf_label": {
+            "const": "EntityExistence"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "conflict_slot": {
+            "const": "existence"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "leaf_label": {
+            "const": "EntityCategory"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "conflict_slot": {
+            "const": "category"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "leaf_label": {
+            "const": "EntityQuantity"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "conflict_slot": {
+            "const": "count"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "leaf_label": {
+            "const": "AttributeValue"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "conflict_slot": {
+            "const": "attribute_value"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "leaf_label": {
+            "const": "StaticRelation"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "conflict_slot": {
+            "const": "relation_predicate"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "leaf_label": {
+            "const": "ActionPredicate"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "conflict_slot": {
+            "const": "predicate"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "leaf_label": {
+            "const": "TemporalRelation"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "conflict_slot": {
+            "const": "order"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "leaf_label": {
+            "const": "CameraPredicate"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "conflict_slot": {
+            "const": "camera_predicate"
+          }
+        }
+      }
+    }
+  ]
+}

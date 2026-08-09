@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VideoHALO canonical video manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "video_id",
+    "source_sha256",
+    "canonical_media_uri",
+    "registered_modalities",
+    "provider_transport",
+    "provider_state"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "videohalo_video_manifest_3.7.1"
+    },
+    "video_id": {
+      "type": "string"
+    },
+    "source_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "canonical_media_uri": {
+      "type": "string",
+      "pattern": "^media://"
+    },
+    "registered_modalities": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "visual",
+          "speech_audio",
+          "non_speech_audio",
+          "on_screen_text",
+          "camera_editing",
+          "container_metadata"
+        ]
+      }
+    },
+    "provider_transport": {
+      "const": "private_gcs_uri"
+    },
+    "provider_state": {
+      "enum": [
+        "pending",
+        "active",
+        "expired",
+        "failed"
+      ]
+    }
+  }
+}

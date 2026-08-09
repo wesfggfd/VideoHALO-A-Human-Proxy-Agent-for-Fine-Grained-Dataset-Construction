@@ -1,0 +1,16 @@
+{
+  "schema_version": "videohalo_video_manifest_3.7.1",
+  "video_id": "videoqa_0102",
+  "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "canonical_media_uri": "media://videoqa_0102/original",
+  "registered_modalities": [
+    "visual",
+    "speech_audio",
+    "non_speech_audio",
+    "on_screen_text",
+    "camera_editing",
+    "container_metadata"
+  ],
+  "provider_transport": "private_gcs_uri",
+  "provider_state": "active"
+}

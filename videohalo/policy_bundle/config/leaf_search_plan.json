@@ -1,0 +1,135 @@
+{
+  "schema_version": "videohalo_taxonomy_first_search_plan_3.7.2",
+  "taxonomy_version": "VHal-Fixed8-3.7",
+  "planning_policy": {
+    "scan_every_leaf": true,
+    "allow_not_constructible": true,
+    "allow_uncertain": true,
+    "maximum_facts_per_leaf_per_video": 1,
+    "distribution_monitoring_only": true,
+    "underrepresented_leaf_priority_may_only_order_verified_supply": true,
+    "balance_must_not_change_leaf_definitions": true
+  },
+  "leaves": [
+    {
+      "leaf_label": "EntityExistence",
+      "fact_kind": "entity_existence",
+      "conflict_slot": "existence",
+      "search_question": "Is there a uniquely grounded entity or scene whose presence or explicit absence is directly decidable in one time scope?",
+      "construction_rule": "Use only an explicit presence-versus-absence assertion about the same grounded entity and time scope.",
+      "hard_exclusions": [
+        "Do not treat a wrong category as non-existence.",
+        "Do not construct from mere omission or a non-exhaustive description."
+      ]
+    },
+    {
+      "leaf_label": "EntityCategory",
+      "fact_kind": "entity_category",
+      "conflict_slot": "category",
+      "search_question": "Is there a uniquely grounded entity whose object category is directly visible and admits a plausible wrong category?",
+      "construction_rule": "Keep the same entity anchor and change only its normalized category.",
+      "hard_exclusions": [
+        "Color, clothing, age appearance, and gender appearance are attributes.",
+        "Do not replace the entity anchor."
+      ]
+    },
+    {
+      "leaf_label": "EntityQuantity",
+      "fact_kind": "entity_quantity",
+      "conflict_slot": "count",
+      "search_question": "Is there a fixed time scope containing a directly countable set of distinct visible entity tracks?",
+      "construction_rule": "Keep the same entity set and time scope and change only the integer count.",
+      "hard_exclusions": [
+        "Do not use event repetition counts.",
+        "Do not use ambiguous, occluded, or changing sets."
+      ]
+    },
+    {
+      "leaf_label": "AttributeValue",
+      "fact_kind": "attribute_value",
+      "conflict_slot": "attribute_value",
+      "search_question": "Is there a uniquely grounded entity or scene with a directly observable unary property?",
+      "construction_rule": "Keep the same entity and attribute key and replace only the observable value.",
+      "hard_exclusions": [
+        "Do not use intentions, personality, atmosphere, or other subjective properties.",
+        "Dynamic events belong to ActionPredicate."
+      ]
+    },
+    {
+      "leaf_label": "StaticRelation",
+      "fact_kind": "static_relation",
+      "conflict_slot": "relation_predicate",
+      "search_question": "Are two grounded entities in a directly decidable static spatial relation within one snapshot-like time scope?",
+      "construction_rule": "Keep subject and object anchors fixed and change only the static relation predicate.",
+      "hard_exclusions": [
+        "Do not use relations that require cross-frame motion to establish.",
+        "Do not swap subject and object anchors."
+      ]
+    },
+    {
+      "leaf_label": "ActionPredicate",
+      "fact_kind": "action_predicate",
+      "conflict_slot": "predicate",
+      "search_question": "Is there a uniquely grounded dynamic event whose action predicate is directly decidable?",
+      "construction_rule": "Keep the event, subject, object, and interval fixed and replace only the action predicate.",
+      "hard_exclusions": [
+        "Do not construct role-binding errors.",
+        "Do not replace the event participants."
+      ]
+    },
+    {
+      "leaf_label": "TemporalRelation",
+      "fact_kind": "temporal_relation",
+      "conflict_slot": "order",
+      "search_question": "Are two supported component events both visible with a directly decidable relative temporal order?",
+      "construction_rule": "Keep both event anchors fixed and reverse only their normalized order.",
+      "hard_exclusions": [
+        "Do not infer causality.",
+        "Do not replace either component event."
+      ]
+    },
+    {
+      "leaf_label": "CameraPredicate",
+      "fact_kind": "camera_predicate",
+      "conflict_slot": "camera_predicate",
+      "search_question": "Does the original video contain a real, temporally bounded camera or editing change whose operation is directly observable rather than inferred from object motion?",
+      "construction_rule": "The supported source fact must assert one actual camera or editing change in the original video. Keep that exact camera-event anchor and interval fixed, then replace only the camera predicate with an incompatible camera/edit change or with no_camera_change to deny the observed change.",
+      "source_predicates": [
+        "pan_left",
+        "pan_right",
+        "tilt_up",
+        "tilt_down",
+        "zoom_in",
+        "zoom_out",
+        "cut",
+        "focus_change",
+        "framing_change",
+        "viewpoint_change"
+      ],
+      "counterfactual_predicates": [
+        "pan_left",
+        "pan_right",
+        "tilt_up",
+        "tilt_down",
+        "zoom_in",
+        "zoom_out",
+        "cut",
+        "focus_change",
+        "framing_change",
+        "viewpoint_change",
+        "no_camera_change"
+      ],
+      "hard_exclusions": [
+        "A stationary shot or generic framing description is not an eligible supported source fact because it does not identify an actual camera or editing change.",
+        "Do not infer camera motion from one actor or object changing image position or apparent size; require global frame, parallax, optical, focus, framing, viewpoint, or edit evidence.",
+        "Actor or object motion belongs to ActionPredicate.",
+        "A static arrangement between entities belongs to StaticRelation.",
+        "A visible unary property belongs to AttributeValue.",
+        "An entity appearing or disappearing through scene action belongs to EntityExistence; only a shot/edit transition belongs here.",
+        "Relative order between two grounded events belongs to TemporalRelation.",
+        "A semantic scene change is not by itself a camera change.",
+        "Do not change the camera-event anchor or interval."
+      ]
+    }
+  ]
+}

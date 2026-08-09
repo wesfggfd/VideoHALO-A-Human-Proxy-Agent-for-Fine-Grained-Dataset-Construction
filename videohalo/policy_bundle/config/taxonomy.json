@@ -1,0 +1,100 @@
+{
+  "taxonomy_version": "VHal-Fixed8-3.7",
+  "parent_categories": [
+    "Entity",
+    "Attribute",
+    "Relation",
+    "Action",
+    "Event",
+    "Camera"
+  ],
+  "leaves": [
+    {
+      "parent": "Entity",
+      "leaf": "EntityExistence",
+      "fact_kind": "entity_existence",
+      "conflict_slot": "existence",
+      "signature": "Exists(entity_or_scene,time_scope)"
+    },
+    {
+      "parent": "Entity",
+      "leaf": "EntityCategory",
+      "fact_kind": "entity_category",
+      "conflict_slot": "category",
+      "signature": "Category(entity_id,category,time_scope)"
+    },
+    {
+      "parent": "Entity",
+      "leaf": "EntityQuantity",
+      "fact_kind": "entity_quantity",
+      "conflict_slot": "count",
+      "signature": "Count(entity_set,time_scope,number)"
+    },
+    {
+      "parent": "Attribute",
+      "leaf": "AttributeValue",
+      "fact_kind": "attribute_value",
+      "conflict_slot": "attribute_value",
+      "signature": "Attribute(anchor_id,key,value,time_scope)"
+    },
+    {
+      "parent": "Relation",
+      "leaf": "StaticRelation",
+      "fact_kind": "static_relation",
+      "conflict_slot": "relation_predicate",
+      "signature": "StaticRelation(subject_id,predicate,object_id,time_scope)"
+    },
+    {
+      "parent": "Action",
+      "leaf": "ActionPredicate",
+      "fact_kind": "action_predicate",
+      "conflict_slot": "predicate",
+      "signature": "EventPredicate(event_id,predicate,interval)"
+    },
+    {
+      "parent": "Event",
+      "leaf": "TemporalRelation",
+      "fact_kind": "temporal_relation",
+      "conflict_slot": "order",
+      "signature": "TemporalRelation(event_a,order,event_b)"
+    },
+    {
+      "parent": "Camera",
+      "leaf": "CameraPredicate",
+      "fact_kind": "camera_predicate",
+      "conflict_slot": "camera_predicate",
+      "signature": "CameraPredicate(camera_event,predicate,interval)"
+    }
+  ],
+  "verdicts": [
+    "supported",
+    "contradicted"
+  ],
+  "analysis_statuses": [
+    "evaluable",
+    "insufficient",
+    "out_of_scope"
+  ],
+  "principles": {
+    "atomic_fact_single_leaf": true,
+    "response_multiple_claims": true,
+    "deterministic_resolver": true,
+    "no_silent_remapping": true,
+    "semantic_source": "gemini_native_original_video"
+  },
+  "resolver": {
+    "entity_existence": "EntityExistence",
+    "entity_category": "EntityCategory",
+    "entity_quantity": "EntityQuantity",
+    "attribute_value": "AttributeValue",
+    "static_relation": "StaticRelation",
+    "action_predicate": "ActionPredicate",
+    "temporal_relation": "TemporalRelation",
+    "camera_predicate": "CameraPredicate"
+  },
+  "excluded_fact_kinds": [
+    "entity_reference",
+    "action_binding",
+    "causal_relation"
+  ]
+}

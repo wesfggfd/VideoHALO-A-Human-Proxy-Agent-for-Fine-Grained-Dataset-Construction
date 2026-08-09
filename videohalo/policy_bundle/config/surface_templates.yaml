@@ -1,0 +1,92 @@
+template_version: 3.7.4
+video_captioning:
+  questions:
+  - "State one directly observable fact from the video in one complete sentence."
+  - "Describe one fact that is directly observable in the video."
+  - "In one complete sentence, report a fact directly supported by the video."
+  - "What is one directly observable fact in the video? Answer in a complete sentence."
+  - "Provide one complete-sentence description of a fact visible or audible in the video."
+  - "Identify one fact directly supported by the video and state it in one sentence."
+  - "Report one concrete observation from the video as a complete sentence."
+  - "Give one complete sentence describing something the video directly establishes."
+  - "Write one sentence stating a clearly observable fact from the video."
+  - "Summarize one video-grounded observation in a complete sentence."
+  answer_style: one complete sentence
+video_qa:
+  question_templates:
+    EntityExistence:
+    - "Is {entity} present during the referenced part of the video?"
+    - "Does the video show {entity} in the referenced interval?"
+    - "Can {entity} be observed in this part of the video?"
+    - "Is {entity} visible or otherwise directly observable here?"
+    - "Does {entity} appear in the relevant portion of the video?"
+    - "Is there direct video evidence that {entity} is present?"
+    EntityCategory:
+    - "What category does {entity} belong to in the video?"
+    - "What type of entity is {entity}?"
+    - "How should {entity} be categorized based on the video?"
+    - "Which entity category best describes {entity}?"
+    - "What kind of thing is {entity} in this video?"
+    - "Based on the video, what is the category of {entity}?"
+    EntityQuantity:
+    - "How many {entity_set} are visible in the referenced interval?"
+    - "What is the number of visible {entity_set} in this part of the video?"
+    - "Count the {entity_set} shown in the referenced interval."
+    - "What quantity of {entity_set} can be observed here?"
+    - "How many instances of {entity_set} does this interval show?"
+    - "What count does the video support for {entity_set}?"
+    AttributeValue:
+    - "What is the {attribute_key} of {entity} in the video?"
+    - "How would you describe the {attribute_key} of {entity}?"
+    - "Which {attribute_key} value is directly observable for {entity}?"
+    - "What {attribute_key} does the video show for {entity}?"
+    - "Which value describes the {attribute_key} of {entity}?"
+    - "Based on the visible evidence, what is the {attribute_key} of {entity}?"
+    StaticRelation:
+    - "Where is {subject} relative to {object}?"
+    - "What is the spatial relation between {subject} and {object}?"
+    - "How is {subject} positioned with respect to {object}?"
+    - "What position does {subject} occupy relative to {object}?"
+    - "How are {subject} and {object} spatially arranged?"
+    - "Which spatial relationship holds between {subject} and {object}?"
+    ActionPredicate:
+    - "What action does {subject} perform involving {object}?"
+    - "What does {subject} do with {object}?"
+    - "Which action involving {object} is performed by {subject}?"
+    - "How does {subject} act on or use {object}?"
+    - "What is {subject} observed doing with {object}?"
+    - "Which action connects {subject} with {object} in this interval?"
+    TemporalRelation:
+    - "What is the temporal order between {event_a} and {event_b}?"
+    - "Which occurs first: {event_a} or {event_b}?"
+    - "How are {event_a} and {event_b} ordered in time?"
+    - "What sequence does the video show for {event_a} and {event_b}?"
+    - "Does {event_a} occur before or after {event_b}?"
+    - "Which temporal relationship holds between {event_a} and {event_b}?"
+    CameraPredicate:
+    - "What camera or editing change occurs during {camera_event}?"
+    - "How does the shot actually change during {camera_event}?"
+    - "Which observed camera or editing operation occurs during {camera_event}?"
+    - "What camera behavior is visible during {camera_event}?"
+    - "How is the camera or edit handled during {camera_event}?"
+    - "Which shot-level operation does the video show during {camera_event}?"
+  null_object_templates:
+  - "What action does {subject} perform?"
+  - "What does {subject} do in the referenced interval?"
+  - "Which action is performed by {subject}?"
+  - "What is {subject} observed doing?"
+  - "How does {subject} act in this part of the video?"
+  - "Which action does the video show {subject} performing?"
+  question_policy: deterministic fact-specific template selected before realization
+  answer_forms:
+    EntityExistence: polar explained sentence; supported and counterfactual
+      answers must use the Yes/No polarity implied by their respective facts
+    EntityCategory: direct complete sentence naming the category
+    EntityQuantity: direct complete sentence stating the count
+    AttributeValue: direct complete sentence stating the requested value
+    StaticRelation: direct complete sentence stating the spatial relation
+    ActionPredicate: direct complete sentence stating the action
+    TemporalRelation: direct complete sentence stating the order
+    CameraPredicate: direct complete sentence stating the camera or edit operation
+  pair_form_policy: both answers must match the question family and use the same
+    grammatical frame; only the frozen conflict slot may differ

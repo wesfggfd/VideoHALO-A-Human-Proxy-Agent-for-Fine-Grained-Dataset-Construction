@@ -1,0 +1,10 @@
+{
+  "entity_existence": "EntityExistence",
+  "entity_category": "EntityCategory",
+  "entity_quantity": "EntityQuantity",
+  "attribute_value": "AttributeValue",
+  "static_relation": "StaticRelation",
+  "action_predicate": "ActionPredicate",
+  "temporal_relation": "TemporalRelation",
+  "camera_predicate": "CameraPredicate"
+}

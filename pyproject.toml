@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "videohalo"
+version = "3.7.0"
+description = "VideoHALO Fixed-8 high-quality dataset construction runtime"
+requires-python = ">=3.9"
+dependencies = [
+  "langgraph>=0.6,<1",
+  "pydantic>=2.7,<3",
+  "PyYAML>=6,<7",
+  "jsonschema>=4.22,<5",
+  "google-genai>=2.3,<3",
+  "google-cloud-storage>=3,<4",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<9", "hypothesis>=6,<7"]
+
+[project.scripts]
+videohalo = "videohalo.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["videohalo*"]
+
+[tool.setuptools.package-data]
+videohalo = ["policy_bundle/**/*"]
