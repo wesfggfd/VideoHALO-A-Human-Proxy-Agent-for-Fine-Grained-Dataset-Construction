@@ -1,4 +1,4 @@
-"""Reducer-safe state contracts for VideoHALO 3.7."""
+"""Reducer-safe state contracts for VideoHALO 3.8."""
 from __future__ import annotations
 
 import operator
@@ -30,7 +30,7 @@ class FactGraphState(TypedDict, total=False):
     dataset_id: str
     video_id: str
     proposed_facts: List[dict]
-    fact_verifier_reports: Annotated[List[dict], operator.add]
+    reflection_reports: Annotated[List[dict], operator.add]
     fact_graph: dict
     fact_graph_ref: dict
     errors: Annotated[List[ErrorRecord], operator.add]

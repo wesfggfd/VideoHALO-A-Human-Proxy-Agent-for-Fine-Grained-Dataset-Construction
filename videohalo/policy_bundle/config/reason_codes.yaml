@@ -7,6 +7,6 @@ codes:
   extra_atomic_fact: Language realization introduced an additional claim.
   multiple_changed_slots: Pair differs in more than one typed slot.
   wrong_leaf_after_backparse: Resolved Fixed-8 leaf differs from planned leaf.
-  verifier_disagreement: Independent A/B verifiers did not reach structural consensus.
+  review_disagreement: Independent agent review did not satisfy the structured contract.
   pair_not_minimal: The answer pair failed one-fact/one-slot minimality.
   duplicate_pair_id: A direct-output record with the same pair_id already exists.

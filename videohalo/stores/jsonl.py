@@ -1,4 +1,4 @@
-"""Schema-first, duplicate-safe JSONL output for VideoHALO 3.7."""
+"""Schema-first, duplicate-safe JSONL output for VideoHALO 3.8."""
 from __future__ import annotations
 
 import json

@@ -8,7 +8,7 @@ from videohalo.contracts.internal_schemas import (
     realization_schema_for,
 )
 from videohalo.answer_alignment import validate_question_answer_alignment
-from videohalo.graphs.build_orchestrator import answer_pair_realization
+from videohalo.graphs.four_stage_orchestrator import answer_pair_realization
 from videohalo.live_build import LiveBuildRunner, _require_complete_sentence
 from videohalo.taxonomy_first import build_leaf_search_plan
 
@@ -20,7 +20,7 @@ class FakeStructuredModel:
     def invoke(self, *, role, request):
         task = request["task_payload"]
         self.requests.append((role, dict(task)))
-        if role == "LEAF_OPPORTUNITY_SCOUT":
+        if role == "planner_agent":
             return {
                 "video_id": task["video_id"],
                 "opportunities": [
@@ -48,7 +48,7 @@ class FakeStructuredModel:
                     for item in task["leaf_checks"]
                 ],
             }
-        if role == "LEAF_FACT_EXTRACTOR":
+        if role == "extraction_agent":
             return {
                 "facts": [
                     {
@@ -65,7 +65,7 @@ class FakeStructuredModel:
                     }
                 ]
             }
-        if role == "FACT_REFLECTION":
+        if role == "reflection_agent":
             return {
                 "verdict": "supported",
                 "unique_grounding": True,
@@ -75,14 +75,14 @@ class FakeStructuredModel:
                 "evidence_summary": "The red cup is visible.",
                 "recoverable_reason": None,
             }
-        if role == "LANGUAGE_REALIZER":
+        if role == "generation_agent":
             return {
                 "replacement_value": "blue",
                 "question": task["fixed_question"],
                 "answer": "The cup is red.",
                 "counterfactual_answer": "The cup is blue.",
             }
-        if role == "PAIR_BACKPARSER":
+        if role == "verification_agent":
             return {
                 "supported_fact": {
                     "fact_kind": "attribute_value",
@@ -97,7 +97,7 @@ class FakeStructuredModel:
                     "attribute_value": "blue",
                 },
             }
-        if role == "CANDIDATE_REFLECTION":
+        if role == "monitor_agent":
             return {
                 "accepted": True,
                 "answer_verdict": "supported",
@@ -168,10 +168,10 @@ def test_live_build_runs_source_to_direct_pair(tmp_path, monkeypatch):
         encoding="utf-8"
     )
     video_roles = {
-        "LEAF_OPPORTUNITY_SCOUT",
-        "LEAF_FACT_EXTRACTOR",
-        "FACT_REFLECTION",
-        "CANDIDATE_REFLECTION",
+        "planner_agent",
+        "extraction_agent",
+        "reflection_agent",
+        "monitor_agent",
     }
     assert {
         payload["media_resolution"]
@@ -516,7 +516,7 @@ def test_build_reflections_require_high_resolution(tmp_path):
 
     def call(role, payload, schema):
         observed.append((role, payload["media_resolution"]))
-        if role == "FACT_REFLECTION":
+        if role == "reflection_agent":
             return {
                 "verdict": "supported",
                 "unique_grounding": True,
@@ -554,13 +554,13 @@ def test_build_reflections_require_high_resolution(tmp_path):
         "planned_leaf_label": "AttributeValue",
         "time_scope": {"start_sec": 0, "end_sec": 1},
     }
-    runner._verify_fact(
+    runner._reflect_on_fact(
         record,
         "gs://private-bucket/video.mp4",
         fact,
-        "FACT_REFLECTION",
+        "reflection_agent",
     )
-    runner._verify_candidate(
+    runner._monitor_candidate(
         {
             "record": record,
             "native_media_ref": "gs://private-bucket/video.mp4",
@@ -569,12 +569,12 @@ def test_build_reflections_require_high_resolution(tmp_path):
             "pair_id": "pair_001",
             "time_scope": {"start_sec": 0, "end_sec": 1},
         },
-        "CANDIDATE_REFLECTION",
+        "monitor_agent",
     )
 
     assert observed == [
-        ("FACT_REFLECTION", "high"),
-        ("CANDIDATE_REFLECTION", "high"),
+        ("reflection_agent", "high"),
+        ("monitor_agent", "high"),
     ]
 
 

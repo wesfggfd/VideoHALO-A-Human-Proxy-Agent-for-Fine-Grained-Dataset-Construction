@@ -40,7 +40,7 @@ For every accepted pair:
 
 - `answer` is fully supported by the same original-video interval. Captioning
   and non-polar VideoQA copy the complete natural-language source fact accepted
-  by high-thinking Fact Reflection verbatim. EntityExistence VideoQA may only
+  by high-thinking `<reflection_agent>` verbatim. EntityExistence VideoQA may only
   add the question-required `Yes,` or `No,` polarity frame while preserving the
   exact supported existence proposition;
 - `counterfactual_answer` is contradicted;

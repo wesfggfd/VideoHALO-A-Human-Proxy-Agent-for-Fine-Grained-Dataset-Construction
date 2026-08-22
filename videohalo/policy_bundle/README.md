@@ -1,12 +1,24 @@
-# VideoHALO 3.7 Fixed-8 Technical Documentation
+# VideoHALO 3.8 Fixed-8 Technical Documentation
 
 > 中文定位：本版本将 VideoHALO 收敛为 **6 个父类、8 个互斥叶标签**的高质量数据集构建系统。系统仅保留构建模式。
 
 ## Normative scope
 
-VideoHALO 3.7 contains one runtime mode:
+VideoHALO 3.8 contains one runtime mode:
 
 1. **Build mode** (`probe_build` or `evalbench_build`): construct a supported answer and a single-slot counterfactual answer from a Gemini-native verified source fact, then directly append one JSON object to `public_probe_items.jsonl`.
+
+Build mode is orchestrated through four structured-output subtasks:
+
+1. Hallucination Category Retrieval — `<planner_agent>`;
+2. Fact Extraction and Reflection — `<extraction_agent>` and
+   `<reflection_agent>`;
+3. Generation and Verification of Adversarial Pairs — `<generation_agent>`
+   and `<verification_agent>`;
+4. Comprehensive Reliability Validation — `<monitor_agent>`.
+
+All six agents share and contribute to `system_cognitive_memory` and
+`category_memory`. These internal memories never extend the public pair schema.
 
 ## Fixed-8 taxonomy
 

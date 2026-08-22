@@ -8,8 +8,8 @@ def validate_internal_pair(candidate: dict) -> None:
         raise ValueError("One-fact/one-slot invariant failed")
     if candidate["supported_contradicted_count"] != 0 or candidate["counterfactual_contradicted_count"] != 1:
         raise ValueError("Single-error invariant failed")
-    if candidate["candidate_verifier_consensus"] is not True:
-        raise ValueError("Two candidate verifiers must agree")
+    if candidate["monitor_accepted"] is not True:
+        raise ValueError("Comprehensive reliability validation failed")
     validate_leaf_slot(candidate["leaf_label"], candidate["conflict_slot"])
 
 def project_direct_record(candidate: dict) -> dict:

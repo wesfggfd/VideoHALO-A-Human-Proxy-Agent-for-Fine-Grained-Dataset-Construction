@@ -1,4 +1,4 @@
-"""VideoHALO 3.7 faithful-relative dataset planning."""
+"""VideoHALO 3.8 faithful-relative dataset planning."""
 
 from .service import (
     build_dataset_plan,

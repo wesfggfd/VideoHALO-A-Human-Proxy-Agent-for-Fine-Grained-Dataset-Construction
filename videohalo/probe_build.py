@@ -1,4 +1,4 @@
-"""Programmatic entry point for VideoHALO 3.7 direct Probe-build output.
+"""Programmatic entry point for VideoHALO 3.8 direct Probe-build output.
 
 The former 3.6 freeze/review/unlock workflow intentionally no longer exists.
 Provider-specific generation code supplies fully back-parsed, independently
@@ -31,7 +31,7 @@ class ProbeBuildRunner:
         video_manifests: Iterable[dict] = (),
         fact_graphs: Iterable[dict] = (),
         eligibility_records: Iterable[dict] = (),
-        fact_verifier_reports: Iterable[dict] = (),
+        reflection_reports: Iterable[dict] = (),
     ) -> list[dict]:
         state = compiled_graph("probe_build").invoke(
             {
@@ -42,7 +42,7 @@ class ProbeBuildRunner:
                 "video_manifests": list(video_manifests),
                 "fact_graphs": list(fact_graphs),
                 "eligibility_records": list(eligibility_records),
-                "fact_verifier_reports": list(fact_verifier_reports),
+                "reflection_reports": list(reflection_reports),
                 "candidates": list(candidates),
             }
         )

@@ -1,4 +1,4 @@
-"""Environment-only runtime settings for VideoHALO 3.7.
+"""Environment-only runtime settings for VideoHALO 3.8.
 
 Frozen semantic policy lives in ``policy_bundle``.  This module contains only
 deployment values and never embeds credentials.

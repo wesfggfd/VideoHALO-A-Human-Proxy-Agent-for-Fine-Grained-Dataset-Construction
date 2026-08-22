@@ -1,6 +1,6 @@
 {
-  "schema_version": "core_memory_manifest_3.7",
-  "core_memory_version": "3.7.5",
+  "schema_version": "core_memory_manifest_3.8",
+  "core_memory_version": "3.8.0",
   "taxonomy_version": "VHal-Fixed8-3.7",
   "output_contract_version": "videohalo_probe_pair_sample_fixed8_3.6.1",
   "frozen": true,
@@ -12,7 +12,7 @@
     },
     {
       "package_path": "02_VideoHALO_Core_System_Prompt.md",
-      "sha256": "4f11b01819a737d3a1b01d1c125dbe1a3052aad863adc912086dd1587757ac57",
+      "sha256": "f54229185194a38d497780d0fbe2028dd6f0aecd6f72db0f71819539ae76613b",
       "read_only": true
     },
     {
@@ -42,7 +42,7 @@
     },
     {
       "package_path": "config/runtime_profiles.yaml",
-      "sha256": "bb90ee66f14b97670ea9698542bd59e62f3d68b366aa7d5580e1d48640fa3cad",
+      "sha256": "4e87e79c5729119b6eeb113a3f5727ea563a12d1631f35e20a6b43a126f13f7c",
       "read_only": true
     },
     {

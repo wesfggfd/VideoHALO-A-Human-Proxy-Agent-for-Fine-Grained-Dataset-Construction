@@ -1,4 +1,4 @@
-"""VideoHALO 3.7 BuildGraph with direct Fixed-8 JSONL output."""
+"""Four-stage VideoHALO orchestration with direct Fixed-8 JSONL output."""
 from __future__ import annotations
 
 from collections import Counter, defaultdict
@@ -6,8 +6,17 @@ from pathlib import Path
 
 from langgraph.graph import END, START, StateGraph
 
+from ..agents import REFLECTION_AGENT
 from ..answer_alignment import validate_question_answer_alignment
 from ..contracts.registry import ContractRegistry
+from ..contracts.stage_outputs import (
+    COMPREHENSIVE_RELIABILITY_VALIDATION,
+    FACT_EXTRACTION_AND_REFLECTION,
+    GENERATION_AND_VERIFICATION,
+    HALLUCINATION_CATEGORY_RETRIEVAL,
+    make_stage_output,
+    validate_stage_output,
+)
 from ..policy.loader import load_core_memory
 from ..resolvers.taxonomy import validate_leaf_slot
 from ..stores.jsonl import append_pair_jsonl
@@ -18,9 +27,6 @@ from ..taxonomy_first import (
 )
 from .fact_graph_build import validate_fact_graph
 from .pair_construction import project_direct_record, validate_internal_pair
-
-_FACT_REFLECTION_ROLE = "FACT_REFLECTION"
-
 
 def _intervals_overlap(left: object, right: object) -> bool:
     if not isinstance(left, dict) or not isinstance(right, dict):
@@ -145,9 +151,9 @@ def require_fact_proposal(state: dict) -> dict:
     return {**state, "fact_proposal_present": True}
 
 
-def require_fact_reflection(state: dict) -> dict:
+def require_reflection_agent_validation(state: dict) -> dict:
     by_fact: dict[tuple[str, str], list[dict]] = defaultdict(list)
-    for report in state.get("fact_verifier_reports", []):
+    for report in state.get("reflection_reports", []):
         key = (str(report.get("video_id")), str(report.get("source_fact_id")))
         by_fact[key].append(report)
     for graph in state.get("fact_graphs", []):
@@ -156,8 +162,7 @@ def require_fact_reflection(state: dict) -> dict:
             reports = by_fact.get(key, [])
             if (
                 len(reports) != 1
-                or reports[0].get("verifier_role")
-                != _FACT_REFLECTION_ROLE
+                or reports[0].get("agent_role") != REFLECTION_AGENT
                 or any(item.get("verdict") != "supported" for item in reports)
                 or any(item.get("unique_grounding") is not True for item in reports)
                 or any(item.get("leaf_correct") is not True for item in reports)
@@ -178,7 +183,7 @@ def require_fact_reflection(state: dict) -> dict:
                 raise ValueError(
                     "Every FactGraph fact requires high-thinking reflection"
                 )
-    return {**state, "fact_verifier_reports_by_id": dict(by_fact)}
+    return {**state, "reflection_reports_by_id": dict(by_fact)}
 
 
 def fact_consensus(state: dict) -> dict:
@@ -308,10 +313,10 @@ def single_error_validation(state: dict) -> dict:
     return {**state, "single_error_validated": True}
 
 
-def candidate_reflection(state: dict) -> dict:
+def comprehensive_monitor_gate(state: dict) -> dict:
     for candidate in state["candidates"]:
         validate_internal_pair(candidate)
-    return {**state, "candidate_reflection_validated": True}
+    return {**state, "comprehensive_reliability_validated": True}
 
 
 def direct_pair_projection(state: dict) -> dict:
@@ -338,31 +343,115 @@ def append_public_jsonl(state: dict) -> dict:
     }
 
 
-def build_orchestrator_graph():
+def hallucination_category_retrieval(state: dict) -> dict:
+    current = load_fixed8_policy(state)
+    current = canonical_media_registration(current)
+    current = private_gcs_materialization(current)
+    current = taxonomy_first_plan(current)
+    current = eight_leaf_opportunity_scan(current)
+    video_ids = sorted(current["video_manifest_by_id"])
+    stage_output = make_stage_output(
+        stage=HALLUCINATION_CATEGORY_RETRIEVAL,
+        video_id=video_ids[0] if len(video_ids) == 1 else "batch",
+        payload={
+            "leaf_search_plan": current["leaf_search_plan"],
+            "leaf_opportunity_matrices": current[
+                "leaf_opportunity_matrices"
+            ],
+        },
+        memory_snapshot=current.get("memory_snapshot", {}),
+    )
+    return {**current, "hallucination_category_retrieval_output": stage_output}
+
+
+def fact_extraction_and_reflection(state: dict) -> dict:
+    upstream = validate_stage_output(
+        state["hallucination_category_retrieval_output"],
+        expected_stage=HALLUCINATION_CATEGORY_RETRIEVAL,
+    )
+    current = leaf_conditioned_fact_extraction(state)
+    current = require_fact_proposal(current)
+    current = require_reflection_agent_validation(current)
+    current = fact_consensus(current)
+    current = fixed8_eligibility_scan(current)
+    current = faithful_relative_selection(current)
+    stage_output = make_stage_output(
+        stage=FACT_EXTRACTION_AND_REFLECTION,
+        video_id=str(upstream["video_id"]),
+        upstream=[upstream],
+        payload={
+            "fact_graphs": current["fact_graphs"],
+            "reflection_reports": current.get("reflection_reports", []),
+            "eligibility_records": current.get("eligibility_records", []),
+        },
+        memory_snapshot=current.get("memory_snapshot", {}),
+    )
+    return {**current, "fact_extraction_and_reflection_output": stage_output}
+
+
+def generation_and_verification_of_adversarial_pairs(state: dict) -> dict:
+    upstream = validate_stage_output(
+        state["fact_extraction_and_reflection_output"],
+        expected_stage=FACT_EXTRACTION_AND_REFLECTION,
+    )
+    current = one_slot_mutation(state)
+    current = answer_pair_realization(current)
+    current = backparse_both_answers(current)
+    current = graph_diff_validation(current)
+    current = single_error_validation(current)
+    stage_output = make_stage_output(
+        stage=GENERATION_AND_VERIFICATION,
+        video_id=str(upstream["video_id"]),
+        upstream=[upstream],
+        payload={"candidates": current["candidates"]},
+        memory_snapshot=current.get("memory_snapshot", {}),
+    )
+    return {
+        **current,
+        "generation_and_verification_output": stage_output,
+    }
+
+
+def comprehensive_reliability_validation(state: dict) -> dict:
+    upstream = validate_stage_output(
+        state["generation_and_verification_output"],
+        expected_stage=GENERATION_AND_VERIFICATION,
+    )
+    current = comprehensive_monitor_gate(state)
+    current = direct_pair_projection(current)
+    current = append_public_jsonl(current)
+    stage_output = make_stage_output(
+        stage=COMPREHENSIVE_RELIABILITY_VALIDATION,
+        video_id=str(upstream["video_id"]),
+        upstream=[upstream],
+        payload={
+            "accepted_records": current["output_records"],
+            "emitted_pair_count": current["emitted_pair_count"],
+        },
+        memory_snapshot=current.get("memory_snapshot", {}),
+    )
+    return {
+        **current,
+        "comprehensive_reliability_validation_output": stage_output,
+    }
+
+
+def build_four_stage_orchestrator_graph():
     graph = StateGraph(dict)
     nodes = [
-        ("load_fixed8_policy", load_fixed8_policy),
-        ("canonical_media_registration", canonical_media_registration),
-        ("private_gcs_materialization", private_gcs_materialization),
-        ("taxonomy_first_plan", taxonomy_first_plan),
-        ("eight_leaf_opportunity_scan", eight_leaf_opportunity_scan),
         (
-            "leaf_conditioned_fact_extraction",
-            leaf_conditioned_fact_extraction,
+            HALLUCINATION_CATEGORY_RETRIEVAL,
+            hallucination_category_retrieval,
         ),
-        ("fact_proposal", require_fact_proposal),
-        ("fact_reflection", require_fact_reflection),
-        ("fact_consensus", fact_consensus),
-        ("fixed8_eligibility_scan", fixed8_eligibility_scan),
-        ("faithful_relative_selection", faithful_relative_selection),
-        ("one_slot_mutation", one_slot_mutation),
-        ("answer_pair_realization", answer_pair_realization),
-        ("backparse_both_answers", backparse_both_answers),
-        ("graph_diff", graph_diff_validation),
-        ("single_error_validation", single_error_validation),
-        ("candidate_reflection", candidate_reflection),
-        ("direct_pair_projection", direct_pair_projection),
-        ("append_public_pair_jsonl", append_public_jsonl),
+        (FACT_EXTRACTION_AND_REFLECTION, fact_extraction_and_reflection),
+        (
+            GENERATION_AND_VERIFICATION,
+            generation_and_verification_of_adversarial_pairs,
+        ),
+        (
+            COMPREHENSIVE_RELIABILITY_VALIDATION,
+            comprehensive_reliability_validation,
+        ),
     ]
     for name, function in nodes:
         graph.add_node(name, function)
@@ -373,4 +462,4 @@ def build_orchestrator_graph():
     return graph
 
 
-build_dataset_construction_graph = build_orchestrator_graph
+build_dataset_construction_graph = build_four_stage_orchestrator_graph

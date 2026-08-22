@@ -31,31 +31,34 @@ def test_direct_projection_is_exact_nine_fields(candidate):
     assert set(record) == PUBLIC_PAIR_FIELDS
     assert record["leaf_label"] == "AttributeValue"
     assert "source_fact_id" not in record
-    assert "candidate_verifier_reports" not in record
+    assert "monitor_reports" not in record
 
 
-def test_candidate_reflection_is_required(candidate):
-    candidate["candidate_verifier_reports"][0]["accepted"] = False
+def test_comprehensive_reliability_validation_is_required(candidate):
+    candidate["monitor_reports"][0]["accepted"] = False
     with pytest.raises(
         ValueError,
-        match="Candidate reflection rejected: accepted",
+        match="Comprehensive reliability validation rejected: accepted",
     ):
         project_direct_record(candidate)
 
 
 def test_candidate_requires_natural_answer_to_match_verified_source(candidate):
-    candidate["candidate_verifier_reports"][0][
+    candidate["monitor_reports"][0][
         "natural_answer_matches_source_fact"
     ] = False
     with pytest.raises(
         ValueError,
-        match="Candidate reflection rejected: natural answer grounding",
+        match=(
+            "Comprehensive reliability validation rejected: "
+            "natural answer grounding"
+        ),
     ):
         project_direct_record(candidate)
 
 
 def test_build_emits_immediately_without_audit_artifacts(
-    tmp_path, candidate, manifest, fact_graph, fact_verifier_reports, eligibility,
+    tmp_path, candidate, manifest, fact_graph, reflection_reports, eligibility,
     leaf_search_plan, opportunity_matrix, leaf_conditioned_fact_records
 ):
     output = tmp_path / "pairs.jsonl"
@@ -70,7 +73,7 @@ def test_build_emits_immediately_without_audit_artifacts(
             "leaf_opportunity_matrices": [opportunity_matrix],
             "leaf_conditioned_facts": leaf_conditioned_fact_records,
             "fact_graphs": [fact_graph],
-            "fact_verifier_reports": fact_verifier_reports,
+            "reflection_reports": reflection_reports,
             "eligibility_records": [eligibility],
             "candidates": [candidate],
         }
@@ -84,7 +87,7 @@ def test_build_emits_immediately_without_audit_artifacts(
 
 
 def test_build_rejects_candidate_without_verified_source(
-    tmp_path, candidate, manifest, fact_graph, fact_verifier_reports, eligibility,
+    tmp_path, candidate, manifest, fact_graph, reflection_reports, eligibility,
     leaf_search_plan, opportunity_matrix, leaf_conditioned_fact_records
 ):
     candidate["source_fact_id"] = "missing"
@@ -98,7 +101,7 @@ def test_build_rejects_candidate_without_verified_source(
                 "leaf_opportunity_matrices": [opportunity_matrix],
                 "leaf_conditioned_facts": leaf_conditioned_fact_records,
                 "fact_graphs": [fact_graph],
-                "fact_verifier_reports": fact_verifier_reports,
+                "reflection_reports": reflection_reports,
                 "eligibility_records": [eligibility],
                 "candidates": [candidate],
             }
@@ -110,13 +113,13 @@ def test_build_rejects_fact_evidence_outside_source_scope(
     candidate,
     manifest,
     fact_graph,
-    fact_verifier_reports,
+    reflection_reports,
     eligibility,
     leaf_search_plan,
     opportunity_matrix,
     leaf_conditioned_fact_records,
 ):
-    fact_verifier_reports[0]["evidence_interval"] = {
+    reflection_reports[0]["evidence_interval"] = {
         "start_sec": 10.0,
         "end_sec": 12.0,
     }
@@ -130,7 +133,7 @@ def test_build_rejects_fact_evidence_outside_source_scope(
                 "leaf_opportunity_matrices": [opportunity_matrix],
                 "leaf_conditioned_facts": leaf_conditioned_fact_records,
                 "fact_graphs": [fact_graph],
-                "fact_verifier_reports": fact_verifier_reports,
+                "reflection_reports": reflection_reports,
                 "eligibility_records": [eligibility],
                 "candidates": [candidate],
             }

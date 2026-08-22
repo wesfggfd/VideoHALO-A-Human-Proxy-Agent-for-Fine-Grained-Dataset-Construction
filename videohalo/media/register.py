@@ -1,4 +1,4 @@
-"""Non-semantic canonical media registration for VideoHALO 3.7."""
+"""Non-semantic canonical media registration for VideoHALO 3.8."""
 from __future__ import annotations
 
 import hashlib

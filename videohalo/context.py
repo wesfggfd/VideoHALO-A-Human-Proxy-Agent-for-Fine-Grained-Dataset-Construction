@@ -1,4 +1,4 @@
-"""Frozen VideoHALO 3.7 runtime context passed to graph nodes."""
+"""Frozen VideoHALO 3.8 runtime context passed to graph nodes."""
 from __future__ import annotations
 
 from dataclasses import dataclass

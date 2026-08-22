@@ -15,13 +15,18 @@ def structured_call(
     payload: Mapping[str, object],
     schema_name: Optional[str] = None,
     schema: Optional[dict] = None,
+    memory_snapshot: Optional[Mapping[str, object]] = None,
     attempts: int = 3,
 ) -> dict:
     if attempts < 1:
         raise ValueError("attempts must be positive")
     if (schema_name is None) == (schema is None):
         raise ValueError("Provide exactly one of schema_name or schema")
-    request = assemble_role_prompt(role, payload)
+    request = assemble_role_prompt(
+        role,
+        payload,
+        memory_snapshot=memory_snapshot,
+    )
     registry = ContractRegistry()
     output_schema = registry.load(schema_name) if schema_name else dict(schema)
     request["output_json_schema"] = output_schema

@@ -31,7 +31,7 @@ The following 3.6 operations are deleted:
 - keep a private machine-reference manifest tied to review records.
 
 The replacement endpoint is direct, schema-validated JSONL emission
-immediately after one high-thinking Candidate Reflection and single-error
+immediately after one high-thinking `<monitor_agent>` validation and single-error
 validation. Fact and candidate A/B committees and the standalone Annotation
 mode were subsequently removed in core memory 3.7.3.
 

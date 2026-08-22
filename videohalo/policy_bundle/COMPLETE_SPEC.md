@@ -1,12 +1,24 @@
-# VideoHALO 3.7 Fixed-8 Technical Documentation
+# VideoHALO 3.8 Fixed-8 Technical Documentation
 
 > 中文定位：本版本将 VideoHALO 收敛为 **6 个父类、8 个互斥叶标签**的高质量数据集构建系统。系统仅保留构建模式。
 
 ## Normative scope
 
-VideoHALO 3.7 contains one runtime mode:
+VideoHALO 3.8 contains one runtime mode:
 
 1. **Build mode** (`probe_build` or `evalbench_build`): construct a supported answer and a single-slot counterfactual answer from a Gemini-native verified source fact, then directly append one JSON object to `public_probe_items.jsonl`.
+
+Build mode is orchestrated through four structured-output subtasks:
+
+1. Hallucination Category Retrieval — `<planner_agent>`;
+2. Fact Extraction and Reflection — `<extraction_agent>` and
+   `<reflection_agent>`;
+3. Generation and Verification of Adversarial Pairs — `<generation_agent>`
+   and `<verification_agent>`;
+4. Comprehensive Reliability Validation — `<monitor_agent>`.
+
+All six agents share and contribute to `system_cognitive_memory` and
+`category_memory`. These internal memories never extend the public pair schema.
 
 ## Fixed-8 taxonomy
 
@@ -101,7 +113,7 @@ The following 3.6 operations are deleted:
 - keep a private machine-reference manifest tied to review records.
 
 The replacement endpoint is direct, schema-validated JSONL emission
-immediately after one high-thinking Candidate Reflection and single-error
+immediately after one high-thinking `<monitor_agent>` validation and single-error
 validation. Fact and candidate A/B committees and the standalone Annotation
 mode were subsequently removed in core memory 3.7.3.
 
@@ -120,6 +132,27 @@ The data contract version remains `videohalo_probe_pair_sample_fixed8_3.6.1` for
 
 - `probe_build`
 - `evalbench_build`
+
+---
+
+# Changelog: VideoHALO 3.7 -> 3.8 Agent Architecture
+
+VideoHALO 3.8 standardizes the construction runtime around exactly six agents,
+two shared memory layers, and four structured-output subtasks.
+
+- Canonical agents: `planner_agent`, `extraction_agent`, `reflection_agent`,
+  `generation_agent`, `verification_agent`, and `monitor_agent`.
+- Memory layers: `system_cognitive_memory` and `category_memory`.
+- Public LangGraph stages: `hallucination_category_retrieval`,
+  `fact_extraction_and_reflection`,
+  `generation_and_verification_of_adversarial_pairs`, and
+  `comprehensive_reliability_validation`.
+- Internal report fields now use `reflection_*`, `monitor_*`, and `agent_role`.
+- The orchestration module is now `four_stage_orchestrator.py`.
+
+The frozen `VHal-Fixed8-3.7` taxonomy, one-fact/one-slot semantics, and public
+`videohalo_probe_pair_sample_fixed8_3.6.1` nine-field output contract are
+unchanged.
 
 ---
 
@@ -337,7 +370,7 @@ For every accepted pair:
 
 - `answer` is fully supported by the same original-video interval. Captioning
   and non-polar VideoQA copy the complete natural-language source fact accepted
-  by high-thinking Fact Reflection verbatim. EntityExistence VideoQA may only
+  by high-thinking `<reflection_agent>` verbatim. EntityExistence VideoQA may only
   add the question-required `Yes,` or `No,` polarity frame while preserving the
   exact supported existence proposition;
 - `counterfactual_answer` is contradicted;
@@ -382,7 +415,7 @@ Do not expose private chain-of-thought. Return compact evidence summaries only.
 
 # Multimodal Video Registration
 
-VideoHALO 3.7 retains Gemini-native minimal registration while using the
+VideoHALO 3.8 retains Gemini-native minimal registration while using the
 Enterprise ADC and private-GCS production boundary.
 
 ## Canonical local registration
@@ -400,8 +433,8 @@ The manifest preserves video, speech audio, non-speech audio, on-screen text cap
 
 The original compatible file is uploaded once to a private Google Cloud
 Storage bucket in the same approved project. The immutable `gs://` URI is
-reused by the Taxonomy Planner, Fact Extractor, Fact Reflection, and Candidate
-Reflection. Object identity is bound to the local SHA-256, object metadata,
+reused by `<planner_agent>`, `<extraction_agent>`, `<reflection_agent>`, and
+`<monitor_agent>`. Object identity is bound to the local SHA-256, object metadata,
 generation, and canonical manifest. Temporary Gemini Files API uploads are not
 part of the production runtime.
 
@@ -423,190 +456,132 @@ The baseline forbids external ASR, OCR, speaker diarization, sound-event detecti
 
 ---
 
-# Memory System Design
+# Dual-Layer Memory System
 
-## Working memory
+VideoHALO uses two append-only memory layers shared by all six agents. Memory
+supports structured coordination; it never replaces direct video evidence and
+never changes the frozen Fixed-8 semantics.
 
-Each LangGraph thread stores per-video or per-item intermediate state:
+## System Cognitive Memory Layer
 
-- VideoManifest and provider lease;
-- proposed and verified facts;
-- eligibility records;
-- planned mutation;
-- realized answer pair;
-- backparse and GraphDiff;
-- reflection reports;
-- direct-output record;
-- retry counters and error codes.
+`system_cognitive_memory` records bounded, versioned operational traces across
+the four subtasks: producer agent, stage, video identity, structured result,
+validation outcome, and retry/audit context. The next agent receives only a
+bounded task-relevant snapshot. This layer enables cross-stage continuity while
+preserving independent rereading by `<reflection_agent>` and `<monitor_agent>`.
 
-A checkpointer persists this state for recovery. Working memory expires according to run policy and is never injected into unrelated samples.
+## Category Memory Layer
 
-## Long-term memory
+`category_memory` indexes the same contributions by Fixed-8 hallucination
+category. It stores category-conditioned constructibility evidence, normalized
+fact patterns, mutation constraints, back-parsing checks, and reliability
+outcomes. A call receives only the categories relevant to its current input.
 
-Long-term memory is read-only, versioned policy:
+## Contribution contract
 
-- Fixed-8 taxonomy;
-- resolver mapping;
-- mutation operators;
-- system prompt;
-- evidence policy;
-- output schemas;
-- model-role contracts.
+`<planner_agent>`, `<extraction_agent>`, `<reflection_agent>`,
+`<generation_agent>`, `<verification_agent>`, and `<monitor_agent>` all read a
+bounded snapshot and append their structured output to both layers. Entries are
+never edited in place. Stage envelopes contain a snapshot reference so the
+reasoning chain remains reproducible.
 
-No human audit history or sample-specific judgment is stored as long-term memory.
+## Isolation and publication
 
-## Audit traces
-
-Engineering traces may be retained for debugging, but the published pair output contains only the direct nine-field contract. Audit traces are not a hidden scoring reference and are not required by downstream users.
+Media URIs, credentials, and unrestricted prompts are excluded from memory.
+Sample-specific traces remain internal artifacts and are not a hidden scoring
+reference. Published pairs continue to contain only the exact nine-field public
+schema.
 
 ---
 
-# LangGraph Engineering Architecture
+# Four-Stage LangGraph Engineering Architecture
 
-## 1. Runtime modes
+## Runtime profiles
 
-```text
-probe_build     → direct Fixed-8 pair JSONL
-evalbench_build → direct Fixed-8 pair JSONL
-```
+`probe_build` and `evalbench_build` share one four-stage BuildGraph. They differ
+only in source pool, selection policy, and target scale.
 
-Probe and EvalBench profiles share one BuildGraph and differ only in selection policy, target scale, and source-video pool.
-
-## 2. BuildGraph
+## Public orchestration graph
 
 ```text
 START
-→ load_fixed8_policy
-→ canonical_media_registration
-→ private_gcs_materialization
-→ taxonomy_first_plan
-→ eight_leaf_opportunity_scan
-→ leaf_conditioned_fact_extraction
-→ fact_reflection
-→ fixed8_eligibility_scan
-→ faithful_relative_selection
-→ one_slot_mutation
-→ answer_pair_realization
-→ backparse_both_answers
-→ graph_diff
-→ single_error_validation
-→ candidate_reflection
-→ direct_pair_projection
-→ append_public_probe_jsonl
-→ END
+  -> hallucination_category_retrieval
+  -> fact_extraction_and_reflection
+  -> generation_and_verification_of_adversarial_pairs
+  -> comprehensive_reliability_validation
+  -> END
 ```
 
-There is no batch freeze, review packaging, human audit, private reference, or unlock graph.
+Each node may execute multiple deterministic gates, but it exposes exactly one
+versioned structured stage output. The next node validates that envelope before
+reading its payload.
 
-## 3. Deterministic routing
+| Subtask | Agents | Video access | Principal output |
+|---|---|---|---|
+| Hallucination Category Retrieval | `<planner_agent>` | original video | eight-leaf opportunity matrix |
+| Fact Extraction and Reflection | `<extraction_agent>`, `<reflection_agent>` | independent original-video reads | reflected FactGraph and eligibility records |
+| Generation and Verification of Adversarial Pairs | `<generation_agent>`, `<verification_agent>` | no direct video access | complete pair, reconstructed facts, GraphDiff |
+| Comprehensive Reliability Validation | `<monitor_agent>` | independent original-video reread | reliability decision and public record |
 
-Build failures route to bounded machine-only actions:
+## Structured communication protocol
 
-- `retry_native_focus`
-- `rewrite_surface`
-- `remutate`
-- `repropose_fact`
-- `reject_candidate`
+Every envelope contains `schema_version`, `stage`, `video_id`,
+`producer_agents`, `upstream_stages`, `payload`, and `memory_snapshot`. Producer
+lists are fixed by the stage contract, which prevents a role from silently
+performing another role's responsibility.
 
-## 4. State and persistence
+## Memory and deterministic gates
 
-Use TypedDict/Pydantic state, a LangGraph checkpointer, idempotent artifact writes, and deterministic IDs derived from `video_id + source_fact_id + mutation_version`. Direct JSONL append must be atomic and deduplicate `pair_id`.
+All agents contribute to `system_cognitive_memory` and `category_memory`.
+Deterministic code still owns media identity, Fixed-8 resolution, eligibility,
+one-slot mutation, GraphDiff, deduplication, budget enforcement, and atomic
+JSONL output. Independent model observations do not share hidden chain of
+thought; only schema-validated outputs enter memory.
 
-## 5. High-thinking reflection
+## Recovery
 
-One high-thinking Fact Reflection validates each extracted fact. One
-high-thinking Candidate Reflection validates each final pair. No A/B committee
-or secondary judging graph remains in the construction runtime.
+Content-addressed artifacts, deterministic IDs, bounded retries, and a
+checkpointer make stage replay idempotent. Recovery never rewrites an accepted
+public sample.
 
 ---
 
-# Build Mode Pipeline
+# Four-Subtask Build Pipeline
 
-## Purpose
+## 1. Hallucination Category Retrieval
 
-Build mode constructs a paired sample directly from a Gemini-native verified
-source fact.
+`<planner_agent>` receives the canonical original video and frozen Fixed-8
+search plan. It evaluates every hallucination category exactly once, returning
+`constructible`, `not_constructible`, or `uncertain`. A constructible entry must
+include a decisive evidence interval, canonical anchor, fact kind, conflict
+slot, and viable one-slot counterfactual. It emits the structured opportunity
+matrix to the next subtask and contributes it to both memory layers.
 
-## Phase 0: frozen taxonomy prior
+Before the call, deterministic code verifies local SHA-256, canonical manifest,
+private GCS lease, object metadata, MIME type, and request-media fingerprint.
 
-The Taxonomy Planner loads the Fixed-8 leaf-search plan before inspecting the
-video. The plan fixes each leaf's fact kind, conflict slot, search question,
-construction rule, and hard exclusions. Class-count targets are not evidence
-and do not affect constructibility.
+## 2. Fact Extraction and Reflection
 
-## Phase 1: eight-leaf opportunity scan
+`<extraction_agent>` inherits only constructible opportunities, rereads their
+evidence intervals, and extracts at most one normalized atomic fact per leaf.
+It preserves the planned category, fact kind, conflict slot, time scope, and
+anchors.
 
-1. Register the original video and materialize its immutable private GCS object.
-   Before any model call, require exact equality across the current local-file
-   SHA-256, canonical manifest SHA-256, active GCS object metadata SHA-256,
-   lease source URI, and request `gs://` media URI. Record a fingerprint of the actual media
-   URI on every media-bearing call; any identity mismatch rejects the video.
-2. Leaf Opportunity Scout evaluates every Fixed-8 leaf exactly once from the
-   original video at high media resolution.
-3. Each row is `constructible`, `not_constructible`, or `uncertain`.
-4. A constructible row records a decisive evidence interval and canonical
-   anchor; non-constructible and uncertain rows record no evidence claim.
+`<reflection_agent>` independently rereads the original video. It rejects facts
+without direct support, unique grounding, a matching evidence interval, correct
+Fixed-8 boundaries, or a viable mutation. Only reflected facts enter the
+FactGraph and evidence-faithful selection. The stage emits the FactGraph,
+reflection reports, and eligibility records.
 
-## Phase 2: leaf-conditioned FactBank
+## 3. Generation and Verification of Adversarial Pairs
 
-1. Leaf Fact Extractor receives only constructible opportunities and rereads
-   their evidence intervals from the original video at high media resolution.
-2. It emits at most one best atomic fact per constructible leaf.
-3. Every fact preserves the planned leaf, fact kind, conflict slot, evidence
-   interval, and anchor.
-4. Fact Reflection rereads the original video at high media resolution and
-   requires support, a non-empty overlapping evidence interval,
-   unique grounding, correct leaf boundaries, and a viable one-slot mutation.
-5. Only reflected facts enter the FactBank. EntityReference, ActionBinding,
-   CausalRelation, ambiguous, or insufficient structures remain ineligible.
+`<generation_agent>` inherits a reflected fact, applies the frozen leaf-specific
+single-slot operator, retrieves the task-compatible question template, and
+realizes a complete natural/counterfactual question-answer pair. Non-target
+anchors and the verified natural answer remain fixed.
 
-## Phase 3: evidence-faithful selection
-
-Selection is based on verified supply, task compatibility, source-fact
-uniqueness, video contribution caps, and deterministic diversity. The final
-leaf distribution follows constructible evidence; there is no equal-count
-target or hard per-leaf quota.
-
-## Phase 4: one-slot counterfactual
-
-The deterministic mutation engine changes exactly one frozen slot:
-
-| leaf | mutation |
-|---|---|
-| EntityExistence | toggle presence/absence assertion |
-| EntityCategory | replace category |
-| EntityQuantity | change count |
-| AttributeValue | replace observable value |
-| StaticRelation | invert/replace static relation |
-| ActionPredicate | replace action predicate |
-| TemporalRelation | reverse relative order |
-| CameraPredicate | replace an observed camera/edit change, or deny it with `no_camera_change` |
-
-## Phase 5: task-specific diverse realization
-
-- Captioning and non-polar VideoQA `answer` copy the complete natural-language
-  reflected source fact verbatim; EntityExistence VideoQA adds only the
-  question-required explained `Yes,`/`No,` polarity frame.
-- `counterfactual_answer` verbalizes the one-slot mutation.
-- Video-captioning deterministically selects one of several complete-sentence
-  prompts.
-- Video-QA deterministically selects one of several leaf-specific question
-  templates, including separate null-object action forms.
-- The selected `question_template_id` is retained internally for audit.
-- The realizer must copy the selected question exactly. Only wording varies;
-  the fact, leaf, slot, evidence scope, and canonical anchors are frozen.
-- Both answers must match the question family. EntityExistence uses
-  self-contained polarity answers; the other seven VideoQA leaves use direct
-  non-Yes/No answers. The two answers retain one grammatical frame and differ
-  only at the conflict slot.
-
-## Phase 6: structural validation
-
-Jointly backparse both answers with canonical non-target fields frozen and
-require:
-
-- the question-answer form contract passes before GraphDiff validation;
-- EntityExistence polarity prefixes recover the corresponding boolean slot;
+`<verification_agent>` jointly back-parses both answers into normalized facts.
+Deterministic validation requires:
 
 ```text
 changed_atomic_fact_count = 1
@@ -618,20 +593,23 @@ resolved_slot = planned_slot
 unexpected_claim_count = 0
 ```
 
-## Phase 7: candidate reflection
+The stage emits the complete pair, reconstructed supported/counterfactual
+facts, and GraphDiff.
 
-Candidate Reflection rereads the original video at high media resolution and
-verifies the full answer pair against the authoritative supported and
-counterfactual structures. It must confirm that the natural answer exactly
-matches the verified source fact and its evidence interval, the target leaf
-boundary is correct, the counterfactual is contradicted under that same leaf,
-and only the target slot differs.
+## 4. Comprehensive Reliability Validation
 
-## Phase 8: direct output
+`<monitor_agent>` receives the complete upstream output and independently
+rereads the original video. It verifies natural-answer support, evidence-scope
+overlap, hallucination-category correctness, counterfactual contradiction,
+single-target-slot mutation, and the absence of additional errors. Only an
+accepted monitor report permits projection to the exact nine-field public
+record and atomic JSONL append.
 
-The validated internal candidate is immediately projected to the public
-nine-field pair record and appended to JSONL. No batch-wide semantic operation
-follows.
+## Shared memory and output boundary
+
+All six agents read bounded snapshots and append schema-validated contributions
+to `system_cognitive_memory` and `category_memory`. Stage envelopes and memory
+traces are internal audit artifacts; the public dataset schema is unchanged.
 
 ---
 
@@ -700,7 +678,7 @@ FactGraphs, reflection reports, mutation plans, and GraphDiff are implementation
 # Dataset Planning and Faithful Relative Allocation
 
 VideoHALO builds only from verified facts found in source videos after the
-Taxonomy Planner has scanned all eight leaves. It does not force equal counts
+`<planner_agent>` has scanned all eight leaves. It does not force equal counts
 across leaves or Task x Leaf cells.
 
 ## Constraints
@@ -719,7 +697,7 @@ deterministic tie-break under the per-video cap. Leaf counts are an observed
 output, not an optimization requirement. A real verified claim from a clearly
 underrepresented leaf may be selected first, but no target may alter taxonomy
 boundaries, opportunity decisions, FactBank contents, mutation semantics, or
-verifier judgments. `probe_build` uses a smaller total-pair target;
+independent agent judgments. `probe_build` uses a smaller total-pair target;
 `evalbench_build` uses a larger one.
 
 ---
@@ -732,7 +710,7 @@ verifier judgments. `probe_build` uses a smaller total-pair target;
 2. Resolver tests for all eight leaf/slot mappings.
 3. Negative tests proving removed fact kinds cannot enter build output.
 4. Mutation property tests: one fact, one slot, one contradiction.
-5. High-thinking fact and candidate reflection tests.
+5. High-thinking `<reflection_agent>` and `<monitor_agent>` tests.
 6. JSONL append idempotency and duplicate-pair rejection.
 7. Private-GCS object identity, idempotent reuse, and generation tests.
 8. ADC/IAM/project failure circuit-breaker and secret-redaction tests.
@@ -818,8 +796,8 @@ The resolver dictionary must contain exactly eight entries. Removed fact kinds m
 
 - native stream registration;
 - immutable private-GCS object reuse through Enterprise ADC;
-- high-thinking Fact Reflection;
+- high-thinking `<reflection_agent>`;
 - one-slot mutation;
 - backparse and GraphDiff;
-- high-thinking Candidate Reflection;
-- working memory and read-only policy memory;
+- high-thinking `<monitor_agent>`;
+- system cognitive memory and category memory;

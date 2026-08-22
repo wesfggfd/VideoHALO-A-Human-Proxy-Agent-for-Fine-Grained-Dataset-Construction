@@ -13,9 +13,9 @@
         "start_sec": 0.0,
         "end_sec": 8.0
       },
-      "verifier_consensus": {
+      "reflection_validation": {
         "accepted": true,
-        "verifier_count": 2
+        "reflection_agent_count": 1
       }
     }
   ]

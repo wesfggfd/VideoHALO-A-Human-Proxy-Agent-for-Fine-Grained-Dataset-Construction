@@ -7,8 +7,11 @@ def validate_fact_graph(state: dict) -> dict:
         leaf = resolve_leaf(fact["fact_kind"])
         if fact["leaf_label"] != leaf or fact["conflict_slot"] != LEAF_TO_SLOT[leaf]:
             raise ValueError("Fact graph contains a non-Fixed-8 or inconsistent fact")
-        if fact["verifier_consensus"] != {"accepted": True, "verifier_count": 2}:
-            raise ValueError("Every source fact requires two-verifier consensus")
+        if fact["reflection_validation"] != {
+            "accepted": True,
+            "reflection_agent_count": 1,
+        }:
+            raise ValueError("Every source fact requires reflection-agent validation")
     return {**state, "fact_graph_validated": True}
 
 def build_fact_graph_validation_graph():

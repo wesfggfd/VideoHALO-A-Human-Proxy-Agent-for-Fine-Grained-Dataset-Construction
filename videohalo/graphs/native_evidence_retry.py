@@ -7,7 +7,7 @@ from ..media.ingestion_policy import ACCEPTED_NATIVE_STATUSES, NativeEvidenceSta
 from ..state import NativeEvidenceState
 
 RECOVERABLE_REASONS = {
-    "fine_visual_detail", "visible_text", "prompt_scope", "recoverable_verifier_disagreement",
+    "fine_visual_detail", "visible_text", "prompt_scope", "recoverable_review_disagreement",
 }
 FORBIDDEN_RETRY_KEYS = {"target_leaf", "target_leaf_label", "mutation", "pair_role", "other_role_verdicts"}
 

@@ -31,7 +31,7 @@
           "conflict_slot",
           "natural_language_fact",
           "time_scope",
-          "verifier_consensus"
+          "reflection_validation"
         ],
         "properties": {
           "source_fact_id": {
@@ -94,17 +94,17 @@
             },
             "additionalProperties": false
           },
-          "verifier_consensus": {
+          "reflection_validation": {
             "type": "object",
             "required": [
               "accepted",
-              "verifier_count"
+              "reflection_agent_count"
             ],
             "properties": {
               "accepted": {
                 "const": true
               },
-              "verifier_count": {
+              "reflection_agent_count": {
                 "const": 1
               }
             },

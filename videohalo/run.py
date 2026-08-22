@@ -1,4 +1,4 @@
-"""Backward-compatible module entry point for the VideoHALO 3.7 CLI."""
+"""Backward-compatible module entry point for the VideoHALO 3.8 CLI."""
 
 from .cli import main
 

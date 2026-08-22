@@ -1,6 +1,6 @@
 # Multimodal Video Registration
 
-VideoHALO 3.7 retains Gemini-native minimal registration while using the
+VideoHALO 3.8 retains Gemini-native minimal registration while using the
 Enterprise ADC and private-GCS production boundary.
 
 ## Canonical local registration
@@ -18,8 +18,8 @@ The manifest preserves video, speech audio, non-speech audio, on-screen text cap
 
 The original compatible file is uploaded once to a private Google Cloud
 Storage bucket in the same approved project. The immutable `gs://` URI is
-reused by the Taxonomy Planner, Fact Extractor, Fact Reflection, and Candidate
-Reflection. Object identity is bound to the local SHA-256, object metadata,
+reused by `<planner_agent>`, `<extraction_agent>`, `<reflection_agent>`, and
+`<monitor_agent>`. Object identity is bound to the local SHA-256, object metadata,
 generation, and canonical manifest. Temporary Gemini Files API uploads are not
 part of the production runtime.
 

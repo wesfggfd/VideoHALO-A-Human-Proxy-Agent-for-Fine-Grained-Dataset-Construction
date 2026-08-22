@@ -1,4 +1,4 @@
-"""VideoHALO 3.7 logical model-role registry and isolation checks."""
+"""VideoHALO canonical six-agent registry and isolation checks."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -6,6 +6,13 @@ from typing import Optional
 
 import yaml
 
+from ..agents import (
+    AGENT_ROLES,
+    GENERATION_AGENT,
+    MONITOR_AGENT,
+    REFLECTION_AGENT,
+    VERIFICATION_AGENT,
+)
 from ..settings import POLICY_BUNDLE_ROOT
 
 
@@ -26,7 +33,11 @@ class ModelRegistry:
         self.validate()
 
     def validate(self) -> None:
-        for role in ("FACT_REFLECTION", "CANDIDATE_REFLECTION"):
+        if set(self.roles) != set(AGENT_ROLES):
+            raise RoleIsolationError(
+                "Model registry must expose exactly the six canonical agents"
+            )
+        for role in (REFLECTION_AGENT, MONITOR_AGENT):
             contract = self.roles.get(role)
             if contract is None:
                 raise RoleIsolationError("Missing build reflection role")
@@ -34,12 +45,17 @@ class ModelRegistry:
                 raise RoleIsolationError(
                     "%s must use high thinking" % role
                 )
-        for role in (
-            "LANGUAGE_REALIZER",
-            "PAIR_BACKPARSER",
-        ):
+        for role in (GENERATION_AGENT, VERIFICATION_AGENT):
             if self.roles.get(role, {}).get("video_access") is not False:
                 raise RoleIsolationError("%s must not access video" % role)
+        for role, contract in self.roles.items():
+            if contract.get("contributes_to") != [
+                "system_cognitive_memory",
+                "category_memory",
+            ]:
+                raise RoleIsolationError(
+                    "%s must contribute to both memory layers" % role
+                )
 
     def role(self, role: str) -> dict:
         try:

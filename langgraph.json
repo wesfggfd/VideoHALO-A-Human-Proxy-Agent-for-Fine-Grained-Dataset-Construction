@@ -1,7 +1,7 @@
 {
   "dependencies": ["."],
   "graphs": {
-    "build": "./videohalo/graphs/build_orchestrator.py:build_dataset_construction_graph"
+    "build": "./videohalo/graphs/four_stage_orchestrator.py:build_dataset_construction_graph"
   },
   "env": ".env"
 }

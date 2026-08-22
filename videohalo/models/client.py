@@ -7,6 +7,14 @@ import os
 import time
 from typing import Mapping, Optional, Protocol
 
+from ..agents import (
+    AGENT_ROLES,
+    EXTRACTION_AGENT,
+    MONITOR_AGENT,
+    PLANNER_AGENT,
+    REFLECTION_AGENT,
+    VERIFICATION_AGENT,
+)
 from ..providers.gemini import build_enterprise_client
 from ..providers.safety import (
     PROVIDER_CIRCUIT,
@@ -20,20 +28,13 @@ FIXED_TEMPERATURE = 0.0
 DEFAULT_THINKING_LEVEL = "low"
 HIGH_THINKING_ROLES = frozenset(
     {
-        "LEAF_OPPORTUNITY_SCOUT",
-        "LEAF_FACT_EXTRACTOR",
-        "FACT_REFLECTION",
-        "CANDIDATE_REFLECTION",
+        PLANNER_AGENT,
+        EXTRACTION_AGENT,
+        REFLECTION_AGENT,
+        MONITOR_AGENT,
     }
 )
-DEFAULT_ROLE_MODELS = {
-    "LEAF_OPPORTUNITY_SCOUT": "gemini-3.6-flash",
-    "LEAF_FACT_EXTRACTOR": "gemini-3.6-flash",
-    "FACT_REFLECTION": "gemini-3.6-flash",
-    "LANGUAGE_REALIZER": "gemini-3.6-flash",
-    "PAIR_BACKPARSER": "gemini-3.6-flash",
-    "CANDIDATE_REFLECTION": "gemini-3.6-flash",
-}
+DEFAULT_ROLE_MODELS = {role: "gemini-3.6-flash" for role in AGENT_ROLES}
 _TEMPERATURE_DEPRECATED_MODEL_PREFIXES = ("gemini-3.6-",)
 
 
@@ -115,12 +116,12 @@ class GeminiEnterpriseModelClient:
         return False
 
     @staticmethod
-    def _is_verifier(role: str) -> bool:
-        return (
-            role.endswith("_VERIFIER_A")
-            or role.endswith("_VERIFIER_B")
-            or role in {"FACT_REFLECTION", "CANDIDATE_REFLECTION"}
-        )
+    def _is_independent_reviewer(role: str) -> bool:
+        return role in {
+            REFLECTION_AGENT,
+            VERIFICATION_AGENT,
+            MONITOR_AGENT,
+        }
 
     @staticmethod
     def _is_flex_capacity_error(exc: Exception) -> bool:
@@ -200,16 +201,15 @@ class GeminiEnterpriseModelClient:
         role_contract = dict(request["role_contract"])
         payload = dict(request["task_payload"])
         hidden = set(role_contract.get("hidden", []))
-        if self._is_verifier(role):
+        if self._is_independent_reviewer(role):
             hidden.update(
                 {
-                    "other_verifier_report",
+                    "other_agent_report",
                     "other_role_observations",
                     "other_role_verdicts",
-                    "peer_report",
-                    "fact_verifier_reports",
-                    "candidate_verifier_reports",
-                    "verifier_reports",
+                    "peer_agent_report",
+                    "reflection_reports",
+                    "monitor_reports",
                 }
             )
         if self._contains_key(payload, hidden):
@@ -238,7 +238,7 @@ class GeminiEnterpriseModelClient:
             raise ValueError("Text-only roles must not receive raw media")
         contents.append(json.dumps({"role": role, "task": payload}, ensure_ascii=False))
 
-        configured_model = os.getenv("VIDEOHALO_MODEL_" + role)
+        configured_model = os.getenv("VIDEOHALO_MODEL_" + role.upper())
         selected_model = (
             configured_model
             or (self.model if self.explicit_model_override else None)
@@ -299,5 +299,5 @@ class GeminiEnterpriseModelClient:
         return value
 
 
-# Transitional import alias for callers compiled against VideoHALO 3.7.0.
+# Transitional import alias for callers compiled against VideoHALO 3.8.0.
 GeminiInteractionsClient = GeminiEnterpriseModelClient

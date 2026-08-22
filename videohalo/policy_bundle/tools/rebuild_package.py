@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SPEC_SOURCES = (
     "README.md",
     "00_CHANGELOG_v3.6_to_v3.7.md",
+    "00_CHANGELOG_v3.7_to_v3.8.md",
     "01_VHal_Fixed8_Atomic_Fact_Taxonomy.md",
     "02_VideoHALO_Core_System_Prompt.md",
     "03_Multimodal_Video_Registration.md",
@@ -26,7 +27,7 @@ SPEC_SOURCES = (
 )
 COMPLETE_MD = ROOT / "COMPLETE_SPEC.md"
 COMPLETE_TXT = (
-    ROOT / "VideoHALO_3.7_Fixed8_Complete_Technical_Specification.txt"
+    ROOT / "VideoHALO_3.8_Fixed8_Complete_Technical_Specification.txt"
 )
 PACKAGE_MANIFEST = ROOT / "PACKAGE_MANIFEST.json"
 
@@ -36,7 +37,8 @@ def sha256(path: Path) -> str:
 
 
 def write_text(path: Path, text: str) -> None:
-    path.write_text(text, encoding="utf-8", newline="\n")
+    with path.open("w", encoding="utf-8", newline="\n") as stream:
+        stream.write(text)
 
 
 def main() -> int:
@@ -83,9 +85,20 @@ def main() -> int:
         "taxonomy_version": "VHal-Fixed8-3.7",
         "runtime_profiles": ["probe_build", "evalbench_build"],
         "annotation_mode_removed": True,
-        "build_reflection_roles": [
-            "FACT_REFLECTION",
-            "CANDIDATE_REFLECTION",
+        "agent_roles": [
+            "planner_agent",
+            "extraction_agent",
+            "reflection_agent",
+            "generation_agent",
+            "verification_agent",
+            "monitor_agent",
+        ],
+        "memory_layers": ["system_cognitive_memory", "category_memory"],
+        "orchestration_stages": [
+            "hallucination_category_retrieval",
+            "fact_extraction_and_reflection",
+            "generation_and_verification_of_adversarial_pairs",
+            "comprehensive_reliability_validation",
         ],
         "fixed8_pair_examples": example_count,
     }
@@ -98,7 +111,9 @@ def main() -> int:
         f"# VideoHALO {core_memory_version} Validation Report\n\n"
         "- Construction-only runtime: PASS\n"
         "- Fixed-8 pair schema/examples: PASS\n"
-        "- Fact and candidate Reflection roles: PASS\n"
+        "- Six canonical agent roles: PASS\n"
+        "- Dual-layer shared memory: PASS\n"
+        "- Four structured-output stages: PASS\n"
         "- Annotation mode absent: PASS\n"
         "- Implementation skeleton compilation: PASS\n",
     )
@@ -120,7 +135,7 @@ def main() -> int:
             }
         )
     manifest = {
-        "package": "VideoHALO_3.7_Fixed8_Technical_Documentation",
+        "package": "VideoHALO_3.8_Fixed8_Technical_Documentation",
         "version": core_memory_version,
         "file_count": len(files),
         "files": files,

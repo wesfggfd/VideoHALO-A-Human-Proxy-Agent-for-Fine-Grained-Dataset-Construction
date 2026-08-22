@@ -1,4 +1,4 @@
-"""VideoHALO 3.7 non-semantic media-registration graph."""
+"""VideoHALO 3.8 non-semantic media-registration graph."""
 from __future__ import annotations
 
 from dataclasses import asdict

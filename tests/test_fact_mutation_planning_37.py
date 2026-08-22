@@ -25,7 +25,7 @@ def test_fact_graph_accepts_only_isolated_unanimous_fixed8_facts():
     reports = [
         {
             "source_fact_id": "f1",
-            "verifier_role": role,
+            "agent_role": role,
             "verdict": "supported",
             "unique_grounding": True,
                 "leaf_correct": True,
@@ -34,13 +34,13 @@ def test_fact_graph_accepts_only_isolated_unanimous_fixed8_facts():
                 "evidence_summary": "The person is visibly running.",
                 "shares_observations": False,
         }
-        for role in ("FACT_REFLECTION",)
+        for role in ("reflection_agent",)
     ]
     state = compiled_graph("fact_graph_build").invoke(
         {
             "video_id": "v1",
             "proposed_facts": proposed,
-            "fact_verifier_reports": reports,
+            "reflection_reports": reports,
         }
     )
     assert [item["source_fact_id"] for item in state["fact_graph"]["facts"]] == [
@@ -54,7 +54,7 @@ def test_removed_fact_cannot_enter_eligibility():
             {"source_fact_id": "f", "fact_kind": "causal_relation"},
             video_id="v",
             task_type="video_qa",
-            verifier_consensus=True,
+            reflection_accepted=True,
             dependency_evaluable=True,
             alternative_count=1,
         )

@@ -1,35 +1,35 @@
-# Memory System Design
+# Dual-Layer Memory System
 
-## Working memory
+VideoHALO uses two append-only memory layers shared by all six agents. Memory
+supports structured coordination; it never replaces direct video evidence and
+never changes the frozen Fixed-8 semantics.
 
-Each LangGraph thread stores per-video or per-item intermediate state:
+## System Cognitive Memory Layer
 
-- VideoManifest and provider lease;
-- proposed and verified facts;
-- eligibility records;
-- planned mutation;
-- realized answer pair;
-- backparse and GraphDiff;
-- reflection reports;
-- direct-output record;
-- retry counters and error codes.
+`system_cognitive_memory` records bounded, versioned operational traces across
+the four subtasks: producer agent, stage, video identity, structured result,
+validation outcome, and retry/audit context. The next agent receives only a
+bounded task-relevant snapshot. This layer enables cross-stage continuity while
+preserving independent rereading by `<reflection_agent>` and `<monitor_agent>`.
 
-A checkpointer persists this state for recovery. Working memory expires according to run policy and is never injected into unrelated samples.
+## Category Memory Layer
 
-## Long-term memory
+`category_memory` indexes the same contributions by Fixed-8 hallucination
+category. It stores category-conditioned constructibility evidence, normalized
+fact patterns, mutation constraints, back-parsing checks, and reliability
+outcomes. A call receives only the categories relevant to its current input.
 
-Long-term memory is read-only, versioned policy:
+## Contribution contract
 
-- Fixed-8 taxonomy;
-- resolver mapping;
-- mutation operators;
-- system prompt;
-- evidence policy;
-- output schemas;
-- model-role contracts.
+`<planner_agent>`, `<extraction_agent>`, `<reflection_agent>`,
+`<generation_agent>`, `<verification_agent>`, and `<monitor_agent>` all read a
+bounded snapshot and append their structured output to both layers. Entries are
+never edited in place. Stage envelopes contain a snapshot reference so the
+reasoning chain remains reproducible.
 
-No human audit history or sample-specific judgment is stored as long-term memory.
+## Isolation and publication
 
-## Audit traces
-
-Engineering traces may be retained for debugging, but the published pair output contains only the direct nine-field contract. Audit traces are not a hidden scoring reference and are not required by downstream users.
+Media URIs, credentials, and unrestricted prompts are excluded from memory.
+Sample-specific traces remain internal artifacts and are not a hidden scoring
+reference. Published pairs continue to contain only the exact nine-field public
+schema.

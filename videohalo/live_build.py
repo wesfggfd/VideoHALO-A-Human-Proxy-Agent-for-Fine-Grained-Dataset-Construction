@@ -1,4 +1,4 @@
-"""Production Gemini-native VideoHALO 3.7 Build runner."""
+"""Production Gemini-native VideoHALO 3.8 Build runner."""
 from __future__ import annotations
 
 import hashlib
@@ -7,6 +7,15 @@ from collections import Counter
 from pathlib import Path
 from typing import Iterable, Optional
 
+from .agents import (
+    EXTRACTION_AGENT,
+    GENERATION_AGENT,
+    MONITOR_AGENT,
+    PLANNER_AGENT,
+    REFLECTION_AGENT,
+    VERIFICATION_AGENT,
+)
+from .agents.registry import agent_spec
 from .contracts.internal_schemas import (
     CANDIDATE_VERIFICATION_SCHEMA,
     FACT_PROPOSAL_SCHEMA,
@@ -15,6 +24,13 @@ from .contracts.internal_schemas import (
     NORMALIZED_FACT_CONTRACTS,
     paired_backparse_schema_for,
     realization_schema_for,
+)
+from .contracts.stage_outputs import (
+    COMPREHENSIVE_RELIABILITY_VALIDATION,
+    FACT_EXTRACTION_AND_REFLECTION,
+    GENERATION_AND_VERIFICATION,
+    HALLUCINATION_CATEGORY_RETRIEVAL,
+    make_stage_output,
 )
 from .contracts.registry import ContractRegistry
 from .answer_alignment import (
@@ -26,6 +42,7 @@ from .graph import compiled_graph
 from .media.register import detect_mime, sha256_path
 from .models.client import GeminiEnterpriseModelClient
 from .models.structured_call import structured_call
+from .memory import DualLayerMemory
 from .mutations.eligibility import evaluate_eligibility
 from .mutations.engine import validate_mutation
 from .observability import RuntimeEventLogger
@@ -45,8 +62,6 @@ from .taxonomy_first import (
 from .settings import get_settings
 from .providers.safety import redact_sensitive
 
-_FACT_REFLECTION_ROLE = "FACT_REFLECTION"
-_CANDIDATE_REFLECTION_ROLE = "CANDIDATE_REFLECTION"
 _COMPLETE_SENTENCE_RE = re.compile(r"^\S+\s+.+[.!?]$")
 
 
@@ -118,6 +133,7 @@ class LiveBuildRunner:
         self.model_client = model_client or GeminiEnterpriseModelClient()
         self.media_adapter = media_adapter
         self.core = load_core_memory()
+        self.memory = DualLayerMemory()
         self.leaf_search_plan = build_leaf_search_plan()
         self.artifact_store = LocalArtifactStore(
             get_settings().artifact_root,
@@ -135,6 +151,32 @@ class LiveBuildRunner:
             event_log_path
             or self.output_path.with_suffix(self.output_path.suffix + ".events.jsonl")
         )
+
+    @staticmethod
+    def _memory_categories(*values: object) -> tuple[str, ...]:
+        categories: list[str] = []
+
+        def visit(value: object) -> None:
+            if isinstance(value, dict):
+                for key, item in value.items():
+                    if key in {"leaf_label", "planned_leaf_label"} and item:
+                        categories.append(str(item))
+                    elif key in {
+                        "leaf_checks",
+                        "constructible_opportunities",
+                        "opportunities",
+                        "facts",
+                        "source_fact",
+                        "planned_leaf_rule",
+                    }:
+                        visit(item)
+            elif isinstance(value, (list, tuple)):
+                for item in value:
+                    visit(item)
+
+        for value in values:
+            visit(value)
+        return tuple(dict.fromkeys(categories)) or ("global",)
 
     def _call(self, role: str, payload: dict, schema: dict) -> dict:
         call_payload = dict(payload)
@@ -168,12 +210,33 @@ class LiveBuildRunner:
             "structured_call_started",
             call_audit,
         )
+        categories = self._memory_categories(call_payload)
+        memory_snapshot = self.memory.snapshot(
+            categories,
+            video_id=str(call_payload.get("video_id") or ""),
+        )
         result = structured_call(
             self.model_client,
             role=role,
             payload=call_payload,
             schema=schema,
             attempts=3,
+            memory_snapshot=memory_snapshot,
+        )
+        categories = self._memory_categories(call_payload, result)
+        self.memory.contribute(
+            agent_role=role,
+            stage=agent_spec(role).stage,
+            video_id=str(call_payload.get("video_id") or ""),
+            categories=categories,
+            content={"structured_output": result},
+        )
+        self.artifact_store.put_json(
+            "dual_layer_memory_snapshot",
+            self.memory.snapshot(
+                categories,
+                video_id=str(call_payload.get("video_id") or ""),
+            ),
         )
         metadata = getattr(self.model_client, "last_call_metadata", {})
         observed_fingerprint = metadata.get("media_ref_fingerprint")
@@ -200,7 +263,7 @@ class LiveBuildRunner:
             "fine_visual_detail",
             "visible_text",
             "prompt_scope",
-            "recoverable_verifier_disagreement",
+            "recoverable_review_disagreement",
         }:
             return first
         retry_payload = {
@@ -286,7 +349,7 @@ class LiveBuildRunner:
         self, record: dict, native_media_ref: str
     ) -> dict:
         output = self._call(
-            "LEAF_OPPORTUNITY_SCOUT",
+            PLANNER_AGENT,
             {
                 "native_media_ref": native_media_ref,
                 "native_media_mime_type": detect_mime(
@@ -341,7 +404,7 @@ class LiveBuildRunner:
         if not constructible:
             return []
         output = self._call(
-            "LEAF_FACT_EXTRACTOR",
+            EXTRACTION_AGENT,
             {
                 "native_media_ref": native_media_ref,
                 "native_media_mime_type": detect_mime(
@@ -379,7 +442,7 @@ class LiveBuildRunner:
             fact["source_fact_id"] = "fact_%03d" % index
         return facts
 
-    def _verify_fact(
+    def _reflect_on_fact(
         self, record: dict, native_media_ref: str, fact: dict, role: str
     ) -> dict:
         rule = next(
@@ -405,7 +468,7 @@ class LiveBuildRunner:
                 "must be non-empty. Confirm that the fact belongs to the exact "
                 "planned leaf under every hard boundary and has a viable "
                 "alternative for its single frozen conflict slot. Do not infer "
-                "another verifier's result."
+                "another agent's result."
             ),
         }
         report = self._call(role, payload, FACT_VERIFICATION_SCHEMA)
@@ -436,7 +499,7 @@ class LiveBuildRunner:
             **report,
             "video_id": record["video_id"],
             "source_fact_id": fact["source_fact_id"],
-            "verifier_role": role,
+            "agent_role": role,
             "shares_observations": False,
         }
 
@@ -452,6 +515,19 @@ class LiveBuildRunner:
             record,
             native_media_ref,
         )
+        category_retrieval_output = make_stage_output(
+            stage=HALLUCINATION_CATEGORY_RETRIEVAL,
+            video_id=record["video_id"],
+            payload={"opportunity_matrix": opportunity_matrix},
+            memory_snapshot=self.memory.snapshot(
+                self._memory_categories(opportunity_matrix),
+                video_id=record["video_id"],
+            ),
+        )
+        self.artifact_store.put_json(
+            "stage_hallucination_category_retrieval",
+            category_retrieval_output,
+        )
         proposed = self._extract_leaf_conditioned_facts(
             record,
             native_media_ref,
@@ -465,11 +541,11 @@ class LiveBuildRunner:
             },
         )
         reports = [
-            self._verify_fact(
+            self._reflect_on_fact(
                 record,
                 native_media_ref,
                 fact,
-                _FACT_REFLECTION_ROLE,
+                REFLECTION_AGENT,
             )
             for fact in proposed
         ]
@@ -479,7 +555,7 @@ class LiveBuildRunner:
                 "dataset_id": self.dataset_id,
                 "video_id": record["video_id"],
                 "proposed_facts": proposed,
-                "fact_verifier_reports": reports,
+                "reflection_reports": reports,
             }
         )
         accepted_ids = {
@@ -501,12 +577,30 @@ class LiveBuildRunner:
             {
                 "video_id": record["video_id"],
                 "facts": list(facts.values()),
-                "verifier_reports": [
+                "reflection_reports": [
                     report
                     for fact_reports in report_by_fact.values()
                     for report in fact_reports
                 ],
             },
+        )
+        fact_extraction_output = make_stage_output(
+            stage=FACT_EXTRACTION_AND_REFLECTION,
+            video_id=record["video_id"],
+            upstream=[category_retrieval_output],
+            payload={
+                "proposed_facts": proposed,
+                "reflection_reports": reports,
+                "fact_graph": graph_state["fact_graph"],
+            },
+            memory_snapshot=self.memory.snapshot(
+                self._memory_categories(opportunity_matrix, proposed),
+                video_id=record["video_id"],
+            ),
+        )
+        self.artifact_store.put_json(
+            "stage_fact_extraction_and_reflection",
+            fact_extraction_output,
         )
         return {
             "record": record,
@@ -516,6 +610,10 @@ class LiveBuildRunner:
             "fact_graph": graph_state["fact_graph"],
             "facts": facts,
             "reports": report_by_fact,
+            "stage_outputs": {
+                HALLUCINATION_CATEGORY_RETRIEVAL: category_retrieval_output,
+                FACT_EXTRACTION_AND_REFLECTION: fact_extraction_output,
+            },
         }
 
     def _realize(self, discovered: dict, fact: dict) -> dict:
@@ -544,8 +642,10 @@ class LiveBuildRunner:
             supported_fact=fact["normalized_fact"],
         )
         output = self._call(
-            "LANGUAGE_REALIZER",
+            GENERATION_AGENT,
             {
+                "video_id": discovered["record"]["video_id"],
+                "leaf_label": leaf,
                 "task_type": task_type,
                 "source_fact": fact,
                 "mutation_operator": operator,
@@ -611,14 +711,18 @@ class LiveBuildRunner:
         question: str,
         answer: str,
         counterfactual_answer: str,
+        video_id: str,
+        leaf_label: str,
         fact_kind: str,
         conflict_slot: str,
         canonical_anchor: dict,
         answer_form: str,
     ) -> dict:
         output = self._call(
-            "PAIR_BACKPARSER",
+            VERIFICATION_AGENT,
             {
+                "video_id": video_id,
+                "leaf_label": leaf_label,
                 "question": question,
                 "answer": answer,
                 "counterfactual_answer": counterfactual_answer,
@@ -649,7 +753,7 @@ class LiveBuildRunner:
                     )
         return output
 
-    def _verify_candidate(
+    def _monitor_candidate(
         self,
         discovered: dict,
         candidate_payload: dict,
@@ -707,7 +811,7 @@ class LiveBuildRunner:
             }
         return {
             **report,
-            "verifier_role": role,
+            "agent_role": role,
             "shares_observations": False,
         }
 
@@ -730,6 +834,8 @@ class LiveBuildRunner:
             question=realization["question"],
             answer=realization["answer"],
             counterfactual_answer=realization["counterfactual_answer"],
+            video_id=discovered["record"]["video_id"],
+            leaf_label=leaf,
             fact_kind=fact["fact_kind"],
             conflict_slot=slot,
             canonical_anchor=canonical_anchor,
@@ -817,13 +923,55 @@ class LiveBuildRunner:
                 if item["leaf_label"] == leaf
             ),
         }
-        verifier_reports = [
-            self._verify_candidate(
+        pair_generation_output = make_stage_output(
+            stage=GENERATION_AND_VERIFICATION,
+            video_id=discovered["record"]["video_id"],
+            upstream=[
+                discovered["stage_outputs"][FACT_EXTRACTION_AND_REFLECTION]
+            ],
+            payload={
+                "pair": verification_payload,
+                "supported_fact": supported,
+                "counterfactual_fact": counterfactual,
+                "graph_diff": authoritative_diff,
+            },
+            memory_snapshot=self.memory.snapshot(
+                (leaf,),
+                video_id=discovered["record"]["video_id"],
+            ),
+        )
+        self.artifact_store.put_json(
+            "stage_generation_and_verification_of_adversarial_pairs",
+            pair_generation_output,
+        )
+        verification_payload["upstream_stage_output"] = pair_generation_output
+        monitor_reports = [
+            self._monitor_candidate(
                 discovered,
                 verification_payload,
-                _CANDIDATE_REFLECTION_ROLE,
+                MONITOR_AGENT,
             )
         ]
+        reliability_output = make_stage_output(
+            stage=COMPREHENSIVE_RELIABILITY_VALIDATION,
+            video_id=discovered["record"]["video_id"],
+            upstream=[pair_generation_output],
+            payload={
+                "pair_id": pair_id,
+                "monitor_reports": monitor_reports,
+                "accepted": all(
+                    item.get("accepted") is True for item in monitor_reports
+                ),
+            },
+            memory_snapshot=self.memory.snapshot(
+                (leaf,),
+                video_id=discovered["record"]["video_id"],
+            ),
+        )
+        self.artifact_store.put_json(
+            "stage_comprehensive_reliability_validation",
+            reliability_output,
+        )
         return {
             **verification_payload,
             "source_fact_id": fact["source_fact_id"],
@@ -838,9 +986,13 @@ class LiveBuildRunner:
             "supported_contradicted_count": 0,
             "counterfactual_contradicted_count": 1,
             "additional_error_count": max(
-                item["additional_error_count"] for item in verifier_reports
+                item["additional_error_count"] for item in monitor_reports
             ),
-            "candidate_verifier_reports": verifier_reports,
+            "monitor_reports": monitor_reports,
+            "stage_outputs": {
+                GENERATION_AND_VERIFICATION: pair_generation_output,
+                COMPREHENSIVE_RELIABILITY_VALIDATION: reliability_output,
+            },
         }
 
     def run(self, source_records: Iterable[dict]) -> dict:
@@ -858,7 +1010,7 @@ class LiveBuildRunner:
                         fact,
                         video_id=item["record"]["video_id"],
                         task_type=item["record"]["task_type"],
-                        verifier_consensus=True,
+                        reflection_accepted=True,
                         dependency_evaluable=True,
                         alternative_count=1,
                     )
@@ -917,7 +1069,7 @@ class LiveBuildRunner:
                         "leaf_conditioned_facts": list(
                             item["facts"].values()
                         ),
-                        "fact_verifier_reports": [
+                        "reflection_reports": [
                             report
                             for reports in item["reports"].values()
                             for report in reports

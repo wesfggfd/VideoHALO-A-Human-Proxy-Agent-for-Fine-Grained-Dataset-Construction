@@ -5,6 +5,7 @@ from pathlib import Path
 
 from langgraph.graph import END, START, StateGraph
 
+from ..agents import MONITOR_AGENT
 from ..contracts.registry import ContractRegistry
 from ..resolvers.taxonomy import validate_leaf_slot
 from ..resolvers.taxonomy import FACT_KIND_TO_LEAF
@@ -12,7 +13,6 @@ from ..stores.jsonl import append_pair_jsonl
 
 OUTPUT_SCHEMA_VERSION = "videohalo_probe_pair_sample_fixed8_3.6.1"
 PAIR_SCHEMA = "videohalo_probe_pair_sample_fixed8.schema.json"
-_CANDIDATE_REFLECTION_ROLE = "CANDIDATE_REFLECTION"
 
 
 def _intervals_overlap(left: object, right: object) -> bool:
@@ -33,17 +33,17 @@ def _intervals_overlap(left: object, right: object) -> bool:
     )
 
 
-def _reflection_rejection_reason(candidate: dict) -> str | None:
-    reports = candidate.get("candidate_verifier_reports")
+def _monitor_rejection_reason(candidate: dict) -> str | None:
+    reports = candidate.get("monitor_reports")
     if reports is None:
-        if candidate.get("candidate_verifier_consensus") is True:
+        if candidate.get("monitor_accepted") is True:
             return None
-        return "Candidate reflection consensus is missing"
+        return "Comprehensive reliability validation is missing"
     if not isinstance(reports, list) or len(reports) != 1:
-        return "Exactly one candidate reflection report is required"
+        return "Exactly one monitor report is required"
     report = reports[0]
-    if report.get("verifier_role") != _CANDIDATE_REFLECTION_ROLE:
-        return "Candidate reflection role is invalid"
+    if report.get("agent_role") != MONITOR_AGENT:
+        return "Monitor agent role is invalid"
     checks = (
         ("accepted", report.get("accepted") is True),
         ("answer verdict", report.get("answer_verdict") == "supported"),
@@ -80,12 +80,12 @@ def _reflection_rejection_reason(candidate: dict) -> str | None:
     )
     for label, passed in checks:
         if not passed:
-            return f"Candidate reflection rejected: {label}"
+            return f"Comprehensive reliability validation rejected: {label}"
     return None
 
 
-def _reflection_accepted(candidate: dict) -> bool:
-    return _reflection_rejection_reason(candidate) is None
+def _monitor_accepted(candidate: dict) -> bool:
+    return _monitor_rejection_reason(candidate) is None
 
 
 def validate_internal_pair(candidate: dict) -> None:
@@ -101,9 +101,9 @@ def validate_internal_pair(candidate: dict) -> None:
         or candidate.get("additional_error_count", 0) != 0
     ):
         raise ValueError("Single-error invariant failed")
-    reflection_rejection = _reflection_rejection_reason(candidate)
-    if reflection_rejection is not None:
-        raise ValueError(reflection_rejection)
+    monitor_rejection = _monitor_rejection_reason(candidate)
+    if monitor_rejection is not None:
+        raise ValueError(monitor_rejection)
     validate_leaf_slot(candidate["leaf_label"], candidate["conflict_slot"])
     changed_paths = diff.get("changed_paths", [])
     if changed_paths:
@@ -154,11 +154,11 @@ def persist_pair(state: dict) -> dict:
 
 def build_pair_construction_graph():
     graph = StateGraph(dict)
-    graph.add_node("validate_graph_diff_and_reflection", validate_candidate_pair)
+    graph.add_node("validate_graph_diff_and_monitor", validate_candidate_pair)
     graph.add_node("project_exact_nine_field_record", project_pair)
     graph.add_node("atomic_append_jsonl", persist_pair)
-    graph.add_edge(START, "validate_graph_diff_and_reflection")
-    graph.add_edge("validate_graph_diff_and_reflection", "project_exact_nine_field_record")
+    graph.add_edge(START, "validate_graph_diff_and_monitor")
+    graph.add_edge("validate_graph_diff_and_monitor", "project_exact_nine_field_record")
     graph.add_edge("project_exact_nine_field_record", "atomic_append_jsonl")
     graph.add_edge("atomic_append_jsonl", END)
     return graph

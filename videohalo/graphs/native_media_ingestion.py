@@ -1,4 +1,4 @@
-"""Persistent private-GCS materialization for VideoHALO 3.7."""
+"""Persistent private-GCS materialization for VideoHALO 3.8."""
 from __future__ import annotations
 
 from dataclasses import asdict

@@ -1,16 +1,30 @@
 {
-  "schema_version": "videohalo_policy_validation_3.7.5",
+  "schema_version": "videohalo_policy_validation_3.8.0",
   "status": "PASS",
-  "core_memory_version": "3.7.5",
+  "core_memory_version": "3.8.0",
   "taxonomy_version": "VHal-Fixed8-3.7",
   "runtime_profiles": [
     "probe_build",
     "evalbench_build"
   ],
   "annotation_mode_removed": true,
-  "build_reflection_roles": [
-    "FACT_REFLECTION",
-    "CANDIDATE_REFLECTION"
+  "agent_roles": [
+    "planner_agent",
+    "extraction_agent",
+    "reflection_agent",
+    "generation_agent",
+    "verification_agent",
+    "monitor_agent"
+  ],
+  "memory_layers": [
+    "system_cognitive_memory",
+    "category_memory"
+  ],
+  "orchestration_stages": [
+    "hallucination_category_retrieval",
+    "fact_extraction_and_reflection",
+    "generation_and_verification_of_adversarial_pairs",
+    "comprehensive_reliability_validation"
   ],
   "fixed8_pair_examples": 8
 }

@@ -1,56 +1,49 @@
-# LangGraph Engineering Architecture
+# Four-Stage LangGraph Engineering Architecture
 
-## 1. Runtime modes
+## Runtime profiles
 
-```text
-probe_build     → direct Fixed-8 pair JSONL
-evalbench_build → direct Fixed-8 pair JSONL
-```
+`probe_build` and `evalbench_build` share one four-stage BuildGraph. They differ
+only in source pool, selection policy, and target scale.
 
-Probe and EvalBench profiles share one BuildGraph and differ only in selection policy, target scale, and source-video pool.
-
-## 2. BuildGraph
+## Public orchestration graph
 
 ```text
 START
-→ load_fixed8_policy
-→ canonical_media_registration
-→ private_gcs_materialization
-→ taxonomy_first_plan
-→ eight_leaf_opportunity_scan
-→ leaf_conditioned_fact_extraction
-→ fact_reflection
-→ fixed8_eligibility_scan
-→ faithful_relative_selection
-→ one_slot_mutation
-→ answer_pair_realization
-→ backparse_both_answers
-→ graph_diff
-→ single_error_validation
-→ candidate_reflection
-→ direct_pair_projection
-→ append_public_probe_jsonl
-→ END
+  -> hallucination_category_retrieval
+  -> fact_extraction_and_reflection
+  -> generation_and_verification_of_adversarial_pairs
+  -> comprehensive_reliability_validation
+  -> END
 ```
 
-There is no batch freeze, review packaging, human audit, private reference, or unlock graph.
+Each node may execute multiple deterministic gates, but it exposes exactly one
+versioned structured stage output. The next node validates that envelope before
+reading its payload.
 
-## 3. Deterministic routing
+| Subtask | Agents | Video access | Principal output |
+|---|---|---|---|
+| Hallucination Category Retrieval | `<planner_agent>` | original video | eight-leaf opportunity matrix |
+| Fact Extraction and Reflection | `<extraction_agent>`, `<reflection_agent>` | independent original-video reads | reflected FactGraph and eligibility records |
+| Generation and Verification of Adversarial Pairs | `<generation_agent>`, `<verification_agent>` | no direct video access | complete pair, reconstructed facts, GraphDiff |
+| Comprehensive Reliability Validation | `<monitor_agent>` | independent original-video reread | reliability decision and public record |
 
-Build failures route to bounded machine-only actions:
+## Structured communication protocol
 
-- `retry_native_focus`
-- `rewrite_surface`
-- `remutate`
-- `repropose_fact`
-- `reject_candidate`
+Every envelope contains `schema_version`, `stage`, `video_id`,
+`producer_agents`, `upstream_stages`, `payload`, and `memory_snapshot`. Producer
+lists are fixed by the stage contract, which prevents a role from silently
+performing another role's responsibility.
 
-## 4. State and persistence
+## Memory and deterministic gates
 
-Use TypedDict/Pydantic state, a LangGraph checkpointer, idempotent artifact writes, and deterministic IDs derived from `video_id + source_fact_id + mutation_version`. Direct JSONL append must be atomic and deduplicate `pair_id`.
+All agents contribute to `system_cognitive_memory` and `category_memory`.
+Deterministic code still owns media identity, Fixed-8 resolution, eligibility,
+one-slot mutation, GraphDiff, deduplication, budget enforcement, and atomic
+JSONL output. Independent model observations do not share hidden chain of
+thought; only schema-validated outputs enter memory.
 
-## 5. High-thinking reflection
+## Recovery
 
-One high-thinking Fact Reflection validates each extracted fact. One
-high-thinking Candidate Reflection validates each final pair. No A/B committee
-or secondary judging graph remains in the construction runtime.
+Content-addressed artifacts, deterministic IDs, bounded retries, and a
+checkpointer make stage replay idempotent. Recovery never rewrites an accepted
+public sample.

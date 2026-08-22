@@ -1,7 +1,7 @@
 # Dataset Planning and Faithful Relative Allocation
 
 VideoHALO builds only from verified facts found in source videos after the
-Taxonomy Planner has scanned all eight leaves. It does not force equal counts
+`<planner_agent>` has scanned all eight leaves. It does not force equal counts
 across leaves or Task x Leaf cells.
 
 ## Constraints
@@ -20,5 +20,5 @@ deterministic tie-break under the per-video cap. Leaf counts are an observed
 output, not an optimization requirement. A real verified claim from a clearly
 underrepresented leaf may be selected first, but no target may alter taxonomy
 boundaries, opportunity decisions, FactBank contents, mutation semantics, or
-verifier judgments. `probe_build` uses a smaller total-pair target;
+independent agent judgments. `probe_build` uses a smaller total-pair target;
 `evalbench_build` uses a larger one.

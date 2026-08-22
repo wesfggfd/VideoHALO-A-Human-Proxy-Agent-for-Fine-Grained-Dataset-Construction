@@ -78,7 +78,7 @@ def request(*, video_access=False):
 
 
 def test_primary_roles_use_enterprise_generate_content_and_adc(monkeypatch):
-    monkeypatch.delenv("VIDEOHALO_MODEL_LANGUAGE_REALIZER", raising=False)
+    monkeypatch.delenv("VIDEOHALO_MODEL_GENERATION_AGENT", raising=False)
     fake = FakeClient()
     client = GeminiEnterpriseModelClient(
         client=fake,
@@ -86,7 +86,7 @@ def test_primary_roles_use_enterprise_generate_content_and_adc(monkeypatch):
         flex_retry_base_seconds=0,
     )
 
-    client.invoke(role="LANGUAGE_REALIZER", request=request(video_access=False))
+    client.invoke(role="generation_agent", request=request(video_access=False))
 
     call = fake.models.calls[0]
     assert call["model"] == "gemini-3.6-flash"
@@ -104,20 +104,20 @@ def test_nonzero_temperature_is_rejected():
     assert FIXED_TEMPERATURE == 0.0
     assert DEFAULT_THINKING_LEVEL == "low"
     assert HIGH_THINKING_ROLES == {
-        "LEAF_OPPORTUNITY_SCOUT",
-        "LEAF_FACT_EXTRACTOR",
-        "FACT_REFLECTION",
-        "CANDIDATE_REFLECTION",
+        "planner_agent",
+        "extraction_agent",
+        "reflection_agent",
+        "monitor_agent",
     }
 
 
 @pytest.mark.parametrize(
     "role",
     [
-        "LEAF_OPPORTUNITY_SCOUT",
-        "LEAF_FACT_EXTRACTOR",
-        "FACT_REFLECTION",
-        "CANDIDATE_REFLECTION",
+        "planner_agent",
+        "extraction_agent",
+        "reflection_agent",
+        "monitor_agent",
     ],
 )
 def test_extraction_and_build_reflection_use_high_thinking(role):
@@ -133,7 +133,7 @@ def test_extraction_and_build_reflection_use_high_thinking(role):
     assert client.last_call_metadata["thinking_level"] == "high"
 
 
-@pytest.mark.parametrize("role", ["LANGUAGE_REALIZER", "PAIR_BACKPARSER"])
+@pytest.mark.parametrize("role", ["generation_agent", "verification_agent"])
 def test_non_build_reflection_roles_use_low_thinking(role):
     fake = FakeClient()
     client = GeminiEnterpriseModelClient(client=fake, service_tier="flex")
@@ -154,7 +154,7 @@ def test_flex_capacity_retries_are_bounded():
         flex_retry_base_seconds=0,
     )
 
-    client.invoke(role="LANGUAGE_REALIZER", request=request(video_access=False))
+    client.invoke(role="generation_agent", request=request(video_access=False))
 
     assert len(fake.models.calls) == 3
 
@@ -182,7 +182,7 @@ def test_403_project_failure_opens_global_circuit_and_redacts_key():
         flex_retry_base_seconds=0,
     )
     with pytest.raises(ProviderCircuitOpenError, match="all provider traffic"):
-        client.invoke(role="LANGUAGE_REALIZER", request=request())
+        client.invoke(role="generation_agent", request=request())
     assert PROVIDER_CIRCUIT.is_open
     assert "secretvalue" not in PROVIDER_CIRCUIT.reason
     assert "AQ.secretvalue" not in redact_sensitive(failure())

@@ -12,7 +12,7 @@ def evaluate_eligibility(
     *,
     video_id: str,
     task_type: str,
-    verifier_consensus: bool,
+    reflection_accepted: bool,
     dependency_evaluable: bool,
     alternative_count: int,
 ) -> dict:
@@ -22,7 +22,7 @@ def evaluate_eligibility(
             "Excluded fact kinds do not enter the Fixed-8 eligibility census"
         )
     reasons = []
-    if not verifier_consensus:
+    if not reflection_accepted:
         reasons.append("fact_reflection_missing")
     if not dependency_evaluable:
         reasons.append("dependency_not_evaluable")

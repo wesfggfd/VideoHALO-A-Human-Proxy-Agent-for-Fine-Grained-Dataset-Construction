@@ -21,9 +21,12 @@ The released workflow was used with the following frozen setting:
 - deterministic hashing, selection, mutation, graph-difference validation,
   deduplication, atomic JSONL output, and budget enforcement outside the model.
 
-Different agent roles use different prompts, media scopes, and reasoning
-settings, but all model-based roles use the same base model. No API-key-based
-fallback or secondary foundation model is part of the production path.
+The runtime exposes exactly six roles: `<planner_agent>`,
+`<extraction_agent>`, `<reflection_agent>`, `<generation_agent>`,
+`<verification_agent>`, and `<monitor_agent>`. They use role-specific prompts,
+media scopes, and reasoning settings while sharing the same base model. No
+API-key-based fallback or secondary foundation model is part of the production
+path.
 
 ## Fixed-8 taxonomy
 
@@ -44,20 +47,28 @@ counterfactual answer that changes exactly one leaf-specific slot.
 
 ## Workflow
 
-The production graph follows these stages:
+The production graph is organized as four structured subtasks:
 
-1. Verify canonical media identity and private same-project GCS transport.
-2. Scan all eight taxonomy leaves for constructible opportunities.
-3. Extract at most one grounded atomic fact per constructible leaf.
-4. Reflect on evidence support, unique grounding, leaf correctness, and
-   mutation viability.
-5. Select verified facts under task, diversity, uniqueness, and per-video caps.
-6. Apply a deterministic, leaf-specific one-slot mutation.
-7. Realize VideoQA or captioning text and jointly back-parse both answers.
-8. Enforce a one-fact, one-slot graph difference with no unexpected changes.
-9. Re-read the complete source video to verify that the natural answer is
-   supported and the counterfactual is contradicted.
-10. Append the exact nine-field public record atomically.
+1. **Hallucination Category Retrieval** — `<planner_agent>` reads the video and
+   scans all eight frozen leaves for constructible evidence intervals.
+2. **Fact Extraction and Reflection** — `<extraction_agent>` inherits the
+   retrieval output and extracts grounded atomic facts; `<reflection_agent>`
+   independently rereads the video and challenges their support, grounding,
+   leaf assignment, and mutation viability.
+3. **Generation and Verification of Adversarial Pairs** —
+   `<generation_agent>` inherits reflected facts, applies the selected
+   leaf-specific template and realizes the natural/counterfactual pair;
+   `<verification_agent>` back-parses both answers into structured facts and
+   enforces the one-fact, one-slot GraphDiff contract.
+4. **Comprehensive Reliability Validation** — `<monitor_agent>` independently
+   rereads the original video, evaluates the complete pair, and permits the
+   atomic nine-field JSONL append only when every reliability gate passes.
+
+Every subtask emits a versioned structured stage envelope consumed by the next
+subtask. All six agents read and contribute to the append-only dual-layer
+memory: `system_cognitive_memory` for cross-stage operational cognition and
+`category_memory` for Fixed-8 category-conditioned experience. Memory traces
+remain internal audit artifacts and never alter the public pair schema.
 
 The full normative specification is under `videohalo/policy_bundle/`.
 

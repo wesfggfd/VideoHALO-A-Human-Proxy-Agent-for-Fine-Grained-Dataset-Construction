@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "videohalo"
-version = "3.7.0"
+version = "3.8.0"
 description = "VideoHALO Fixed-8 high-quality dataset construction runtime"
 requires-python = ">=3.9"
 dependencies = [

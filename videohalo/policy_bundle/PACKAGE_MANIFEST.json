@@ -1,12 +1,17 @@
 {
-  "package": "VideoHALO_3.7_Fixed8_Technical_Documentation",
-  "version": "3.7.5",
-  "file_count": 49,
+  "package": "VideoHALO_3.8_Fixed8_Technical_Documentation",
+  "version": "3.8.0",
+  "file_count": 50,
   "files": [
     {
       "path": "00_CHANGELOG_v3.6_to_v3.7.md",
-      "bytes": 1839,
-      "sha256": "f4da0c7d1a07f66968ba0e26cb889eb7d340edf26008adbc9794dee5be1db49c"
+      "bytes": 1847,
+      "sha256": "8e63228b93203b2b0407d502998d8ac55fb43f36f6fa8cb69a0f140d47cea6c5"
+    },
+    {
+      "path": "00_CHANGELOG_v3.7_to_v3.8.md",
+      "bytes": 913,
+      "sha256": "76bfce7315ae4ac54ee41988c4e143a459f71a19b069a96907aa5087db1a869a"
     },
     {
       "path": "01_VHal_Fixed8_Atomic_Fact_Taxonomy.md",
@@ -15,28 +20,28 @@
     },
     {
       "path": "02_VideoHALO_Core_System_Prompt.md",
-      "bytes": 4268,
-      "sha256": "4f11b01819a737d3a1b01d1c125dbe1a3052aad863adc912086dd1587757ac57"
+      "bytes": 4273,
+      "sha256": "f54229185194a38d497780d0fbe2028dd6f0aecd6f72db0f71819539ae76613b"
     },
     {
       "path": "03_Multimodal_Video_Registration.md",
-      "bytes": 1790,
-      "sha256": "accc806edfe7fbe852f3756cdcb30fcb7db5153817920782467211d5cf226175"
+      "bytes": 1795,
+      "sha256": "59af83fc15517f57781d188a6c8e10ccd1d0f6ca4d0979c988cc343a97bf62c3"
     },
     {
       "path": "04_Memory_System_Design.md",
-      "bytes": 1028,
-      "sha256": "703a8c531f6e34d1207cd48b0c7da495a1ecdf79a7ad2cb2edcf2c7b178f54c9"
+      "bytes": 1621,
+      "sha256": "e62d16d9a1403fa388c645355a27eb3c7bd4e3b7c487d7c48ef7d99ceff945f0"
     },
     {
       "path": "05_LangGraph_Engineering_Architecture.md",
-      "bytes": 1575,
-      "sha256": "623300e70799fec7538f99f75a0cb21153021560f7c8ba66f121ba05bab80774"
+      "bytes": 2141,
+      "sha256": "9272b00cb3dc38234b18b351b6a00f0baa88fa56f39b89e5a3c345fb7772c403"
     },
     {
       "path": "06_Build_Mode_Pipeline.md",
-      "bytes": 4931,
-      "sha256": "8e453a1650f8962271c24d92b13d5027b75f779e1174ae24c56e6130350a9405"
+      "bytes": 2828,
+      "sha256": "c21c7e9d587bbeb4148ea3164117635022c5a806706ab18cf7cb76181c4ea936"
     },
     {
       "path": "08_Direct_Output_Data_Contracts.md",
@@ -45,28 +50,28 @@
     },
     {
       "path": "09_Dataset_Planning_and_Relative_Allocation.md",
-      "bytes": 1083,
-      "sha256": "ea775d75faff1f6fc96c7151db2d9241a1bc5333c9447c87fceefaa3feb623b3"
+      "bytes": 1093,
+      "sha256": "1c92722d5347262a91e2d86744fd1c78a6db73a6a1ae4bbd255a4e4d397f7667"
     },
     {
       "path": "10_Deployment_Testing_and_Operations.md",
-      "bytes": 1870,
-      "sha256": "195c6e2cc76bd8c7f63b31797b163de94e3f76c24b8bc58e8c2d8ab4895b25f4"
+      "bytes": 1883,
+      "sha256": "a0f25d6a96d963001eac467dfa292c78a9b7aa3cf8e80301355f2c72fd7658ea"
     },
     {
       "path": "11_Implementation_Migration_From_3.6.md",
-      "bytes": 1387,
-      "sha256": "a90236892325bed3041d15794b390c8322cfe5f75724eaafb31b00540802c1dd"
+      "bytes": 1390,
+      "sha256": "4f88369f46a1b4c14046031a6eb59fc995993535ee17055cf02e66842fa04c31"
     },
     {
       "path": "COMPLETE_SPEC.md",
-      "bytes": 30507,
-      "sha256": "07b863d8dc72baa10a94b1d92ad329b0442930892a6feb84ef560fe9f743bafd"
+      "bytes": 31064,
+      "sha256": "c62d861dda278e44380e63b5617b12a8f8240ed9ecc3f2ea2109401a79fa6bb5"
     },
     {
       "path": "config/core_memory_manifest.json",
       "bytes": 2026,
-      "sha256": "926534d6b1265d71cd3e3aa62c654445b240aa800068ce0ea27383f4189d2a81"
+      "sha256": "70d753f75aa4dccf40994312beae8ccf92505ddd228274e9e59efc8ed6beed7e"
     },
     {
       "path": "config/leaf_search_plan.json",
@@ -85,8 +90,8 @@
     },
     {
       "path": "config/model_roles.yaml",
-      "bytes": 1088,
-      "sha256": "5397fe0820e3a501de3b12652066a2d7263c97f616a14db5df390976b01c96bc"
+      "bytes": 1837,
+      "sha256": "ff81216c6792006d230aaf00e652768790b71c0622f4152e90af2f6270927169"
     },
     {
       "path": "config/mutation_operators.json",
@@ -100,8 +105,8 @@
     },
     {
       "path": "config/reason_codes.yaml",
-      "bytes": 764,
-      "sha256": "1445061ab030fa3e56e47a1f988fd9681561e3c5fa5011d70a4e3f552a22056d"
+      "bytes": 766,
+      "sha256": "125e2468ba39b40411bb04bcbae8219ceeb16ee2ce68f0186080bf37071de58a"
     },
     {
       "path": "config/resolver_rules.json",
@@ -110,8 +115,8 @@
     },
     {
       "path": "config/runtime_profiles.yaml",
-      "bytes": 800,
-      "sha256": "bb90ee66f14b97670ea9698542bd59e62f3d68b366aa7d5580e1d48640fa3cad"
+      "bytes": 788,
+      "sha256": "4e87e79c5729119b6eeb113a3f5727ea563a12d1631f35e20a6b43a126f13f7c"
     },
     {
       "path": "config/surface_templates.yaml",
@@ -135,8 +140,8 @@
     },
     {
       "path": "examples/sample_fact_graph.json",
-      "bytes": 569,
-      "sha256": "93250d5e8567a8ea97bc4d83b4e3d0316bd8ecddc30d1dc288f256bda71bb149"
+      "bytes": 580,
+      "sha256": "b12a3a368d8fe7b3d8573d13c490d2904dd2ac03f0037f4760b3d2e16b4f3aff"
     },
     {
       "path": "examples/sample_probe_pair.json",
@@ -154,11 +159,6 @@
       "sha256": "6dbd172665da4b7e722c971759a4f81a95adae99764993e41d69649dfaca4144"
     },
     {
-      "path": "implementation_skeleton/build_orchestrator.py",
-      "bytes": 1188,
-      "sha256": "23882dc4c5fe971fdf2a1ae5db60b1e67ac2c9cf37b8541e8a6c6ec4594e96db"
-    },
-    {
       "path": "implementation_skeleton/context.py",
       "bytes": 470,
       "sha256": "8682ab2f23d21bea205f2309942a898879ebb88753f5732de212ce5f7fcb5b40"
@@ -170,8 +170,13 @@
     },
     {
       "path": "implementation_skeleton/fact_graph_build.py",
-      "bytes": 922,
-      "sha256": "33eebe7423cbc97c1f9be1bd7c4a1671ab04f545801be8f8c020214ff2b45385"
+      "bytes": 973,
+      "sha256": "17097860c8d84c64411f65e0c5d7797a08436a1f1262daf60c090046c2d2da64"
+    },
+    {
+      "path": "implementation_skeleton/four_stage_orchestrator.py",
+      "bytes": 781,
+      "sha256": "5ffee3ea1a0312992ebe60a758b270b25525a02dc53711dbe5df4745669c8b76"
     },
     {
       "path": "implementation_skeleton/media_registration.py",
@@ -180,8 +185,8 @@
     },
     {
       "path": "implementation_skeleton/pair_construction.py",
-      "bytes": 1237,
-      "sha256": "e632925bea87c0373ca883802c2651f8485d7d509a791d0451dc8a6574815ab3"
+      "bytes": 1234,
+      "sha256": "f9837e04e9f339a3707f7cf7c9d4c71fbb04d61f2e04fe4907c596f0314b699a"
     },
     {
       "path": "implementation_skeleton/README.md",
@@ -200,8 +205,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 2399,
-      "sha256": "cccb4f62ee214f32880d1c3d129d95e2217432a4563497fb998108f5a48c6fe8"
+      "bytes": 2937,
+      "sha256": "1fe026b99c57d00fa40b7e846ef0ed117a183499ba7f256406a08be971d2e0a9"
     },
     {
       "path": "schemas/eligibility_record_fixed8.schema.json",
@@ -210,8 +215,8 @@
     },
     {
       "path": "schemas/fact_graph_fixed8.schema.json",
-      "bytes": 2855,
-      "sha256": "f0f8d9e2b002fab300966e00d9e89cc6c60d7f33f68e68c75f2d048bf5997233"
+      "bytes": 2877,
+      "sha256": "6da18edd368278f0ae042ad432a44c6dfebe106d82887df01c194ab4c72a041a"
     },
     {
       "path": "schemas/video_manifest.schema.json",
@@ -225,8 +230,8 @@
     },
     {
       "path": "tools/rebuild_package.py",
-      "bytes": 4409,
-      "sha256": "42a153d831ee8ec0322361157d2f33ded77cce9dd362e06829535ee3ae88a398"
+      "bytes": 5004,
+      "sha256": "830bbe347602a104111049d5516e4596e70af76f7b038592e2be6094406b2d1c"
     },
     {
       "path": "tools/validate_package.py",
@@ -235,18 +240,18 @@
     },
     {
       "path": "VALIDATION_REPORT.json",
-      "bytes": 374,
-      "sha256": "05d948fff994719f2c2e6a7f26903a50776f9b1966c5aecbfb8da33754231154"
+      "bytes": 741,
+      "sha256": "a6ea55171b6f0202e8cc048978389855a91c843a2bd3b2db3c90c7835cf91a21"
     },
     {
       "path": "VALIDATION_REPORT.md",
-      "bytes": 227,
-      "sha256": "b03b28bce6f0346cbeb8a2fe5157b4f8433ee4da1be39b3c5db529e42f2659ad"
+      "bytes": 288,
+      "sha256": "ed1afc3b0f1710f23c41a3bd65025d128b724566150b6cdffaab383edbbc961d"
     },
     {
-      "path": "VideoHALO_3.7_Fixed8_Complete_Technical_Specification.txt",
-      "bytes": 30507,
-      "sha256": "07b863d8dc72baa10a94b1d92ad329b0442930892a6feb84ef560fe9f743bafd"
+      "path": "VideoHALO_3.8_Fixed8_Complete_Technical_Specification.txt",
+      "bytes": 31064,
+      "sha256": "c62d861dda278e44380e63b5617b12a8f8240ed9ecc3f2ea2109401a79fa6bb5"
     }
   ]
 }

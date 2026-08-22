@@ -1,26 +1,42 @@
-model_roles_version: 3.7.3
+model_roles_version: 3.8.0
 roles:
-- role: LEAF_OPPORTUNITY_SCOUT
+- role: planner_agent
+  stage: hallucination_category_retrieval
   thinking_level: high
+  video_access: true
   shares_observations: false
+  contributes_to: [system_cognitive_memory, category_memory]
   purpose: scan every Fixed-8 leaf from the high-resolution original video using the frozen taxonomy-first search plan
-- role: LEAF_FACT_EXTRACTOR
+- role: extraction_agent
+  stage: fact_extraction_and_reflection
   thinking_level: high
+  video_access: true
   shares_observations: false
+  contributes_to: [system_cognitive_memory, category_memory]
   purpose: extract at most one high-resolution-grounded atomic fact for each constructible planned leaf
-- role: FACT_REFLECTION
+- role: reflection_agent
+  stage: fact_extraction_and_reflection
   thinking_level: high
+  video_access: true
   shares_observations: false
+  contributes_to: [system_cognitive_memory, category_memory]
   purpose: high-thinking reflection over one extracted source fact, its leaf boundary, evidence interval, and mutation viability
-- role: LANGUAGE_REALIZER
+- role: generation_agent
+  stage: generation_and_verification_of_adversarial_pairs
   thinking_level: low
   video_access: false
+  contributes_to: [system_cognitive_memory, category_memory]
   purpose: verbalize supported and counterfactual structures
-- role: PAIR_BACKPARSER
+- role: verification_agent
+  stage: generation_and_verification_of_adversarial_pairs
   thinking_level: low
   video_access: false
+  contributes_to: [system_cognitive_memory, category_memory]
   purpose: jointly recover both answer facts while preserving shared anchors
-- role: CANDIDATE_REFLECTION
+- role: monitor_agent
+  stage: comprehensive_reliability_validation
   thinking_level: high
+  video_access: true
   shares_observations: false
-  purpose: high-thinking reflection over the natural answer, single-slot counterfactual, and planned leaf
+  contributes_to: [system_cognitive_memory, category_memory]
+  purpose: comprehensive reliability validation of the complete pair through an independent high-resolution reread of the original video

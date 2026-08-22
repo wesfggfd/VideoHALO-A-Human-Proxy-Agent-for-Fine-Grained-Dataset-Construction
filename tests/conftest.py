@@ -52,9 +52,9 @@ def fact_graph():
                 "conflict_slot": "attribute_value",
                 "natural_language_fact": "The cup is red.",
                 "time_scope": {"start_sec": 0.0, "end_sec": 2.0},
-                "verifier_consensus": {
+                "reflection_validation": {
                     "accepted": True,
-                    "verifier_count": 1,
+                    "reflection_agent_count": 1,
                 },
             }
         ],
@@ -62,12 +62,12 @@ def fact_graph():
 
 
 @pytest.fixture
-def fact_verifier_reports():
+def reflection_reports():
     return [
         {
             "video_id": "video_001",
             "source_fact_id": "fact_001",
-            "verifier_role": role,
+            "agent_role": role,
             "verdict": "supported",
             "unique_grounding": True,
             "leaf_correct": True,
@@ -76,7 +76,7 @@ def fact_verifier_reports():
             "evidence_summary": "The red cup is visible.",
             "shares_observations": False,
         }
-        for role in ("FACT_REFLECTION",)
+        for role in ("reflection_agent",)
     ]
 
 
@@ -152,7 +152,7 @@ def eligibility():
 def candidate(media):
     reports = [
         {
-            "verifier_role": role,
+            "agent_role": role,
             "accepted": True,
             "answer_verdict": "supported",
             "counterfactual_verdict": "contradicted",
@@ -168,7 +168,7 @@ def candidate(media):
             "evidence_summary": "The natural answer matches the red cup.",
             "shares_observations": False,
         }
-        for role in ("CANDIDATE_REFLECTION",)
+        for role in ("monitor_agent",)
     ]
     return {
         "pair_id": "pair_001",
@@ -202,5 +202,5 @@ def candidate(media):
         "supported_contradicted_count": 0,
         "counterfactual_contradicted_count": 1,
         "additional_error_count": 0,
-        "candidate_verifier_reports": reports,
+        "monitor_reports": reports,
     }

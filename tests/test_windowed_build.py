@@ -168,16 +168,16 @@ def test_runtime_metrics_aggregate_windowed_worker_event_logs(tmp_path):
     rows = [
         {
             "timestamp": "2026-01-01T00:00:00+00:00",
-            "node_name": "LEAF_FACT_EXTRACTOR",
+            "node_name": "extraction_agent",
             "event_type": "structured_call_started",
-            "payload": {"role": "LEAF_FACT_EXTRACTOR"},
+            "payload": {"role": "extraction_agent"},
         },
         {
             "timestamp": "2026-01-01T00:00:02+00:00",
-            "node_name": "LEAF_FACT_EXTRACTOR",
+            "node_name": "extraction_agent",
             "event_type": "structured_call_completed",
             "payload": {
-                "role": "LEAF_FACT_EXTRACTOR",
+                "role": "extraction_agent",
                 "usage": {
                     "total_input_tokens": 100,
                     "total_output_tokens": 10,

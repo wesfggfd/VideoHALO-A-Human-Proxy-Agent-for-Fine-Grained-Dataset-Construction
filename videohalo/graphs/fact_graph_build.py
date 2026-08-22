@@ -6,13 +6,13 @@ from dataclasses import asdict
 
 from langgraph.graph import END, START, StateGraph
 
+from ..agents import REFLECTION_AGENT
 from ..contracts.registry import ContractRegistry
 from ..resolvers.taxonomy import FACT_KIND_TO_LEAF, LEAF_TO_SLOT
 from ..settings import get_settings
 from ..stores.artifacts import LocalArtifactStore
 
 FACT_GRAPH_SCHEMA = "fact_graph_fixed8.schema.json"
-_FACT_REFLECTION_ROLE = "FACT_REFLECTION"
 
 
 def _intervals_overlap(left: object, right: object) -> bool:
@@ -36,7 +36,7 @@ def _intervals_overlap(left: object, right: object) -> bool:
 def _accepted_reflection(reports: list[dict], time_scope: object) -> bool:
     return (
         len(reports) == 1
-        and reports[0].get("verifier_role") == _FACT_REFLECTION_ROLE
+        and reports[0].get("agent_role") == REFLECTION_AGENT
         and all(item.get("verdict") == "supported" for item in reports)
         and all(item.get("unique_grounding") is True for item in reports)
         and all(item.get("leaf_correct") is True for item in reports)
@@ -54,7 +54,7 @@ def assemble_fact_graph(state: dict) -> dict:
     if state.get("fact_graph") is not None:
         return state
     by_fact: dict[str, list[dict]] = defaultdict(list)
-    for report in state.get("fact_verifier_reports", []):
+    for report in state.get("reflection_reports", []):
         by_fact[str(report.get("source_fact_id"))].append(report)
     accepted: list[dict] = []
     for fact in state.get("proposed_facts", []):
@@ -73,7 +73,10 @@ def assemble_fact_graph(state: dict) -> dict:
                 "conflict_slot": LEAF_TO_SLOT[leaf],
                 "natural_language_fact": str(fact["natural_language_fact"]),
                 "time_scope": dict(fact["time_scope"]),
-                "verifier_consensus": {"accepted": True, "verifier_count": 1},
+                "reflection_validation": {
+                    "accepted": True,
+                    "reflection_agent_count": 1,
+                },
             }
         )
     return {

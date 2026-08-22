@@ -1,4 +1,4 @@
-"""Hash-verifying loader for the frozen VideoHALO 3.7 policy bundle."""
+"""Hash-verifying loader for the frozen VideoHALO 3.8 policy bundle."""
 from __future__ import annotations
 
 import hashlib

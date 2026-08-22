@@ -6,7 +6,7 @@
 2. Resolver tests for all eight leaf/slot mappings.
 3. Negative tests proving removed fact kinds cannot enter build output.
 4. Mutation property tests: one fact, one slot, one contradiction.
-5. High-thinking fact and candidate reflection tests.
+5. High-thinking `<reflection_agent>` and `<monitor_agent>` tests.
 6. JSONL append idempotency and duplicate-pair rejection.
 7. Private-GCS object identity, idempotent reuse, and generation tests.
 8. ADC/IAM/project failure circuit-breaker and secret-redaction tests.

@@ -24,7 +24,7 @@ ACCEPTED_NATIVE_STATUSES = {NativeEvidenceStatus.SUFFICIENT.value, NativeEvidenc
 @dataclass(frozen=True)
 class NativeMediaPolicy:
     proposer_resolution: str = "low"
-    verifier_resolution: str = "medium"
+    review_resolution: str = "medium"
     retry_resolution: str = "high"
     max_focused_retries: int = 1
     external_semantic_artifacts_enabled: bool = False

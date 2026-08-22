@@ -1,4 +1,4 @@
-"""Command-line interface for the VideoHALO 3.7 Fixed-8 runtime."""
+"""Command-line interface for the VideoHALO 3.8 Fixed-8 runtime."""
 from __future__ import annotations
 
 import argparse
@@ -119,7 +119,7 @@ def _build(args: argparse.Namespace) -> dict:
     video_manifests: list[dict] = []
     fact_graphs: list[dict] = []
     eligibility_records: list[dict] = []
-    fact_verifier_reports: list[dict] = []
+    reflection_reports: list[dict] = []
     for record in records:
         if "candidate" in record:
             candidates.append(record["candidate"])
@@ -130,7 +130,7 @@ def _build(args: argparse.Namespace) -> dict:
         video_manifests.extend(record.get("video_manifests", []))
         fact_graphs.extend(record.get("fact_graphs", []))
         eligibility_records.extend(record.get("eligibility_records", []))
-        fact_verifier_reports.extend(record.get("fact_verifier_reports", []))
+        reflection_reports.extend(record.get("reflection_reports", []))
     state = compiled_graph(args.profile).invoke(
         {
             "run_id": args.run_id,
@@ -140,7 +140,7 @@ def _build(args: argparse.Namespace) -> dict:
             "video_manifests": video_manifests,
             "fact_graphs": fact_graphs,
             "eligibility_records": eligibility_records,
-            "fact_verifier_reports": fact_verifier_reports,
+            "reflection_reports": reflection_reports,
             "candidates": candidates,
         }
     )
@@ -168,7 +168,7 @@ def _validate(args: argparse.Namespace) -> dict:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="videohalo",
-        description="VideoHALO 3.7 Fixed-8 direct-output runtime",
+        description="VideoHALO 3.8 Fixed-8 direct-output runtime",
     )
     sub = parser.add_subparsers(dest="command", required=True)
 

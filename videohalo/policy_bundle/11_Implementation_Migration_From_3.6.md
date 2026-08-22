@@ -48,8 +48,8 @@ The resolver dictionary must contain exactly eight entries. Removed fact kinds m
 
 - native stream registration;
 - immutable private-GCS object reuse through Enterprise ADC;
-- high-thinking Fact Reflection;
+- high-thinking `<reflection_agent>`;
 - one-slot mutation;
 - backparse and GraphDiff;
-- high-thinking Candidate Reflection;
-- working memory and read-only policy memory;
+- high-thinking `<monitor_agent>`;
+- system cognitive memory and category memory;
