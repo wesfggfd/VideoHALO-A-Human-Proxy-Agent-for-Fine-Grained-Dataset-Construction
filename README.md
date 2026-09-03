@@ -11,15 +11,11 @@ The benchmark data and source videos are not included in this repository.
 
 The released workflow was used with the following frozen setting:
 
-- 2,600 cleaned candidate videos;
-- a distribution-preserving 1,200-video active pool, balanced as 600 VideoQA
-  and 600 video-captioning sources;
+- 1,090 cleaned candidate videos;
 - a target of 2,000 accepted natural/counterfactual pairs;
 - at most two accepted pairs per source video;
 - one semantic model, `gemini-3.6-flash`, accessed through the Google Cloud
-  Enterprise/Vertex transport with ADC; and
-- deterministic hashing, selection, mutation, graph-difference validation,
-  deduplication, atomic JSONL output, and budget enforcement outside the model.
+  Enterprise/Vertex transport with ADC
 
 The runtime exposes exactly six roles: `<planner_agent>`,
 `<extraction_agent>`, `<reflection_agent>`, `<generation_agent>`,
@@ -28,7 +24,7 @@ media scopes, and reasoning settings while sharing the same base model. No
 API-key-based fallback or secondary foundation model is part of the production
 path.
 
-## Fixed-8 taxonomy
+## Hallucination taxonomy
 
 VideoHALO constructs visually decidable errors over eight mutually exclusive
 atomic-fact leaves:
