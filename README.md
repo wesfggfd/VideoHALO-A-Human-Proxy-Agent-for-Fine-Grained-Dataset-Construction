@@ -1,8 +1,8 @@
 # VideoHALO
 
-VideoHALO is the human-proxy agentic workflow used to construct the 2,000-pair
-VidHalLoc video hallucination benchmark. This repository contains the public,
-credential-free release of the exact Fixed-8 construction runtime, policy
+VideoHALO is the human-proxy agentic workflow used to construct the 2,000 samples
+VidHalLoc video hallucination benchmark. This repository contains the public
+credential-free release of the exact hallucination diagnostic framework construction runtime, policy
 bundle, selection utilities, Enterprise execution tools, monitors, and tests.
 
 The benchmark data and source videos are not included in this repository.
